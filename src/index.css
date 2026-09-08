@@ -137,7 +137,7 @@ button { font-family: inherit; cursor: pointer; }
 .page-above { position: relative; z-index: 1; background: var(--bg); margin-bottom: 50vh; margin-bottom: 50svh; }
 .colophon { position: fixed; left: 0; right: 0; bottom: 0; height: 50vh; height: 50svh; z-index: 0; background: var(--bg); overflow: hidden; }
 .colophon-inner { display: flex; justify-content: space-between; align-items: start; padding-top: 8vh; height: 100%; }
-.colophon-mark { font-family: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif; font-weight: 800; font-size: clamp(4rem, 12vw, 11rem); line-height: .85; letter-spacing: -.04em; text-transform: uppercase; color: var(--ink); margin: 0; }
+.colophon-mark { font-family: var(--font-head); font-weight: 600; font-size: 6.4rem; line-height: .8em; letter-spacing: -.024em; text-transform: uppercase; color: #212121; margin: 0; font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on; }
 .colophon-side { text-align: right; padding-top: 8px; }
 .colophon-links { display: flex; gap: 18px; justify-content: flex-end; font-size: .8rem; font-weight: 500; }
 .colophon-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -196,6 +196,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .hero { grid-template-columns: 1fr; padding: 56px 0 32px; }
   .hero .hero-social { grid-column: 1; }
   .hero h1 { font-size: 3rem; }
+  .colophon-mark { font-size: 3rem; }
   .sec-head { flex-wrap: wrap; }
   .sec-title { width: 100%; }
   .sec-head h2 { font-size: 22px; }
