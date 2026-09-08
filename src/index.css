@@ -96,7 +96,9 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Expertise — label-left/lede-right header + ruled 3-column rows */
 .expertise { margin: 64px 0; }
-.exp-head { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; margin-bottom: 24px; }
+.exp-head { display: flex; align-items: baseline; margin-bottom: 24px; }
+.exp-label-wrap { width: 50%; text-align: left; }
+.exp-lede-wrap { width: 50%; }
 .exp-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .expertise .lede { font-size: 38px; line-height: 1.2; letter-spacing: -.018em; font-weight: 400; color: var(--ink); margin: 0; }
 .exp-rows { border-bottom: 1px solid var(--line-dark); }
@@ -187,7 +189,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .list-tags { display: none; }
   .list-spacer { display: none; }
   .expertise .lede { font-size: 28px; }
-  .exp-head { grid-template-columns: 1fr; gap: 12px; }
+  .exp-head { flex-wrap: wrap; }
+  .exp-label-wrap, .exp-lede-wrap { width: 100%; }
   .exp-row { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
   .exp-row .n { font-size: 4.5rem; }
   .cat-group h3 { font-size: 24px; }

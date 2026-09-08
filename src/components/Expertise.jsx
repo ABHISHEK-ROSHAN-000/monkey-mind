@@ -5,8 +5,12 @@ export default function Expertise() {
   return (
     <section className="expertise">
       <div className="exp-head">
-        <p className="exp-label">Our Expertise</p>
-        <p className="lede">{settings.about.lede}</p>
+        <div className="exp-label-wrap">
+          <p className="exp-label">Our Expertise</p>
+        </div>
+        <div className="exp-lede-wrap">
+          <p className="lede">{settings.about.lede}</p>
+        </div>
       </div>
       <div className="exp-rows">
         {settings.expertise.map((e) => (
