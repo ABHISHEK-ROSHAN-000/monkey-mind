@@ -7,7 +7,7 @@ export default function Projects() {
   return (
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
-        <h1>WORKED<br />ON</h1>
+        <h1>Worked on</h1>
         <p className="blurb">Every project grouped by discipline. Pick a category to jump in.</p>
         <div className="hero-social">
           {settings.socials.map((s) => (

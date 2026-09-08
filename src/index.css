@@ -50,7 +50,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Hero — title left, blurb middle, socials right */
 .hero { display: grid; grid-template-columns: 1.25fr .75fr auto; gap: 32px; align-items: start; padding: 120px 0 64px; }
-.hero h1 { font-family: var(--font-head); font-weight: 600; font-size: 6.4rem; line-height: .8em; letter-spacing: -.024em; margin: 0; text-transform: uppercase; color: #212121; font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on; }
+.hero h1 { font-family: var(--font-head); font-weight: 600; font-size: 6.4rem; line-height: .8em; letter-spacing: -.024em; margin: 0; color: #212121; font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on; }
 .hero .blurb { color: #5e5e5e; max-width: 340px; font-size: .8rem; font-weight: 500; line-height: 1.32; margin: 8px 0 0; }
 .hero .hero-social { display: flex; gap: 18px; font-size: .8rem; font-weight: 500; margin-top: 8px; white-space: nowrap; }
 .hero .hero-social a:hover { text-decoration: underline; text-underline-offset: 4px; }
