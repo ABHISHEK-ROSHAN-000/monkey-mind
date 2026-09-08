@@ -134,9 +134,9 @@ button { font-family: inherit; cursor: pointer; }
 .testi .who { color: var(--muted); margin-top: 12px; font-size: .82rem; font-weight: 500; }
 
 /* Footer uncover — page scrolls over a pinned colophon */
-.page-above { position: relative; z-index: 1; background: var(--bg); margin-bottom: 100vh; margin-bottom: 100svh; }
-.colophon { position: fixed; left: 0; right: 0; bottom: 0; height: 100vh; height: 100svh; z-index: 0; background: var(--bg); overflow: hidden; }
-.colophon-inner { display: flex; justify-content: space-between; align-items: start; padding-top: 12vh; height: 100%; }
+.page-above { position: relative; z-index: 1; background: var(--bg); margin-bottom: 50vh; margin-bottom: 50svh; }
+.colophon { position: fixed; left: 0; right: 0; bottom: 0; height: 50vh; height: 50svh; z-index: 0; background: var(--bg); overflow: hidden; }
+.colophon-inner { display: flex; justify-content: space-between; align-items: start; padding-top: 8vh; height: 100%; }
 .colophon-mark { font-family: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif; font-weight: 800; font-size: clamp(4rem, 12vw, 11rem); line-height: .85; letter-spacing: -.04em; text-transform: uppercase; color: var(--ink); margin: 0; }
 .colophon-side { text-align: right; padding-top: 8px; }
 .colophon-links { display: flex; gap: 18px; justify-content: flex-end; font-size: .8rem; font-weight: 500; }
