@@ -209,6 +209,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .sec-head h2 { font-size: 22px; }
   .view-switch { max-width: none; width: 100%; margin-left: 0; }
   .view-switch button { font-size: 22px; }
+  .view-switch button:last-child { display: none; }
   .works-grid { grid-template-columns: repeat(2, 1fr); }
   .work-tile { aspect-ratio: auto; }
   .work-tile .tile-frame { position: relative; inset: auto; aspect-ratio: 1/1; }
