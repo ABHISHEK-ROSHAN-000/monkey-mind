@@ -4,11 +4,13 @@ export default function Expertise() {
   const { settings } = useSite();
   return (
     <section className="expertise">
-      <p style={{ fontSize: '.8rem', fontWeight: 500, margin: '0 0 12px' }}>Our Expertise</p>
-      <p className="lede">{settings.about.lede}</p>
-      <div className="exp-grid">
+      <div className="exp-head">
+        <p className="exp-label">Our Expertise</p>
+        <p className="lede">{settings.about.lede}</p>
+      </div>
+      <div className="exp-rows">
         {settings.expertise.map((e) => (
-          <div className="exp-card" key={e.title}>
+          <div className="exp-row" key={e.title}>
             <div className="n">{e.n}</div>
             <h3>{e.title}</h3>
             <p>{e.text}</p>
