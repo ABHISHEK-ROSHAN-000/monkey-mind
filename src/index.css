@@ -230,8 +230,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .detail-hero h1 { font-size: 3rem; }
   .foot-grid .big { font-size: 28px; }
   .testi-track { grid-template-columns: 1fr; }
-  .inq-inner { min-height: 100vh; min-height: 100svh; padding-top: 96px; padding-bottom: 64px; }
-  .inq-bottom .big { font-size: 28px; }
+  .inq-inner { min-height: 100vh; min-height: 100svh; padding-top: 96px; padding-bottom: 100px; }
+  .inq-bottom .big { font-size: 22px; }
   .colophon-inner { flex-direction: column; gap: 24px; padding-top: 16px; justify-content: flex-start; }
   .page-above { margin-bottom: 25vh; margin-bottom: 25svh; }
   .colophon { height: 25vh; height: 25svh; }
