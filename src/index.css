@@ -221,7 +221,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .expertise .lede { font-size: 24px; }
   .exp-head { flex-wrap: wrap; row-gap: 12px; }
   .exp-label-wrap, .exp-lede-wrap { width: 100%; }
-  .exp-row { padding: 28px 0; flex-wrap: nowrap; gap: 28px; }
+  .exp-row { padding: 40px 0; flex-wrap: nowrap; gap: 40px; }
   .exp-num-wrap { width: auto; flex-shrink: 0; }
   .exp-content-wrap { width: auto; flex: 1; flex-direction: column; align-items: flex-start; row-gap: 6px; }
   .exp-content-wrap p { max-width: none; }
@@ -230,9 +230,11 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .detail-hero h1 { font-size: 3rem; }
   .foot-grid .big { font-size: 28px; }
   .testi-track { grid-template-columns: 1fr; }
-  .inq-inner { min-height: 92vh; padding-top: 96px; padding-bottom: 64px; }
+  .inq-inner { min-height: 100vh; min-height: 100svh; padding-top: 96px; padding-bottom: 64px; }
   .inq-bottom .big { font-size: 28px; }
-  .colophon-inner { flex-direction: column; gap: 32px; padding-top: 10vh; }
+  .colophon-inner { flex-direction: column; gap: 12px; padding-top: 0; justify-content: center; }
+  .page-above { margin-bottom: 25vh; margin-bottom: 25svh; }
+  .colophon { height: 25vh; height: 25svh; }
   .colophon-side { text-align: left; }
   .colophon-links { justify-content: flex-start; flex-wrap: wrap; }
   .admin-shell { grid-template-columns: 1fr; }
