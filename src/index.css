@@ -28,7 +28,7 @@ a { color: inherit; text-decoration: none; }
 img, video { display: block; max-width: 100%; }
 button { font-family: inherit; cursor: pointer; }
 
-.wrap { max-width: var(--max); margin: 0 auto; padding: 0 40px; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 140px; }
 
 /* Header — minimal static top bar (brand / Index+Projects / email) */
 .site-header { position: sticky; top: 0; z-index: 50; background: transparent; }
@@ -88,7 +88,7 @@ button { font-family: inherit; cursor: pointer; }
 /* Works: full-bleed */
 .works-full .full-item { margin: 0 calc(50% - 50vw); }
 .works-full .full-item img, .works-full .full-item video { width: 100%; height: 72vh; object-fit: cover; }
-.works-full .full-cap { max-width: var(--max); margin: 10px auto 34px; padding: 0 40px; font-size: 1.2rem; font-weight: 500; }
+.works-full .full-cap { max-width: var(--max); margin: 10px auto 34px; padding: 0 140px; font-size: 1.2rem; font-weight: 500; }
 
 /* Expertise */
 .expertise { margin: 64px 0; }
