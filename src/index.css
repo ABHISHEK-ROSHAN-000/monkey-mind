@@ -9,7 +9,6 @@
   --card: #ffffff;
   --dark: #0f0f0f;
   --pill: #212121;
-  --font-hero: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
   --font-head: "Clash Display", "Inter", system-ui, sans-serif;
   --font-body: "Switzer", "Inter", system-ui, -apple-system, sans-serif;
   --max: 1560px;
@@ -44,7 +43,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Hero — title left, blurb middle, socials right */
 .hero { display: grid; grid-template-columns: 1.25fr .75fr auto; gap: 32px; align-items: start; padding: 120px 0 64px; }
-.hero h1 { font-family: var(--font-hero); font-weight: 800; font-size: clamp(4rem, 11vw, 9.5rem); line-height: .85; letter-spacing: -.04em; margin: 0; text-transform: uppercase; color: var(--ink); }
+.hero h1 { font-family: var(--font-head); font-weight: 600; font-size: 6.4rem; line-height: .8em; letter-spacing: -.024em; margin: 0; text-transform: uppercase; color: #212121; font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on; }
 .hero .blurb { color: #333; max-width: 340px; font-size: 13px; line-height: 1.55; margin: 8px 0 0; }
 .hero .hero-social { display: flex; gap: 18px; font-size: 13px; margin-top: 8px; white-space: nowrap; }
 .hero .hero-social a:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -167,7 +166,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .menu-btn { display: inline-block; }
   .hero { grid-template-columns: 1fr; padding: 56px 0 32px; }
   .hero .hero-social { grid-column: 1; }
-  .hero h1 { font-size: clamp(3.4rem, 19vw, 5.5rem); }
+  .hero h1 { font-size: 3rem; }
   .hero-home h1 { font-size: 3rem; }
   .sec-head { flex-wrap: wrap; }
   .sec-head h2 { font-size: 1.35rem; }
