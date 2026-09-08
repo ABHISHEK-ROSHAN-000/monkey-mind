@@ -1,9 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 
+const rnd = (n) => Math.floor(Math.random() * n);
+// Random subset of `count` indexes out of 12
+const pick = (count) => {
+  const pool = Array.from({ length: 12 }, (_, i) => i);
+  const out = new Set();
+  while (out.size < count && pool.length) out.add(pool.splice(rnd(pool.length), 1)[0]);
+  return out;
+};
+
 // Info hero: full-bleed 4×3 photo grid over a giant centered title.
-// Every 1s one random visible cell fades to 0 and one hidden cell restores,
-// so the grid breathes without ever draining. Quick-smooth .5s transitions.
+// All 12 start invisible for 2s, then 4–7 random images are visible at any
+// time — every 1s the visible set drifts to a new random 4–7.
 export default function InfoHero() {
   const { publishedProjects, settings } = useSite();
 
@@ -19,23 +28,46 @@ export default function InfoHero() {
     return urls.slice(0, 12);
   }, [publishedProjects]);
 
-  const [hidden, setHidden] = useState(() => new Set());
+  // hidden = indexes currently faded out. Start: everything hidden.
+  const [hidden, setHidden] = useState(() => new Set(cells.map((_, i) => i)));
+  const live = useRef(false);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    live.current = false;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setHidden(new Set());
+      return;
+    }
+    setHidden(new Set(cells.map((_, i) => i)));
+    const start = setTimeout(() => {
+      const keep = pick(4 + rnd(4)); // 4–7 stay visible
+      setHidden(new Set(cells.map((_, i) => i).filter((i) => !keep.has(i))));
+      live.current = true;
+    }, 2000);
     const t = setInterval(() => {
+      if (!live.current) return;
+      const target = 4 + rnd(4); // new random 4–7
       setHidden((prev) => {
+        const visible = cells.map((_, i) => i).filter((i) => !prev.has(i));
         const next = new Set(prev);
-        const visible = cells.map((_, i) => i).filter((i) => !next.has(i));
-        if (visible.length) next.add(visible[Math.floor(Math.random() * visible.length)]);
-        if (next.size > 0 && Math.random() < 0.85) {
+        while (visible.length > target) {
+          const i = visible.splice(rnd(visible.length), 1)[0];
+          next.add(i);
+        }
+        while (visible.length < target) {
           const hid = [...next];
-          next.delete(hid[Math.floor(Math.random() * hid.length)]);
+          if (!hid.length) break;
+          const i = hid.splice(rnd(hid.length), 1)[0];
+          next.delete(i);
+          visible.push(i);
         }
         return next;
       });
     }, 1000);
-    return () => clearInterval(t);
+    return () => {
+      clearTimeout(start);
+      clearInterval(t);
+    };
   }, [cells]);
 
   return (
