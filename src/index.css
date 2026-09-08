@@ -123,7 +123,7 @@ button { font-family: inherit; cursor: pointer; }
 .cat-group .sub { color: var(--muted); margin-bottom: 14px; }
 
 /* Detail — compact title block after tall whitespace, then viewport-filling full-bleed stack */
-.detail-hero { padding: 36vh 0 48px; }
+.detail-hero { padding: 30vh 0 48px; }
 .detail-hero h1 { font-family: var(--font-body); font-weight: 500; font-size: 34px; letter-spacing: -.018em; line-height: 1.2; margin: 0; color: var(--ink); }
 .detail-hero p { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--muted); max-width: 460px; margin: 16px 0 0; }
 .detail-meta { display: flex; gap: 32px; color: var(--ink); font-size: .8rem; font-weight: 500; margin: 32px 0 0; }
@@ -232,7 +232,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .exp-content-wrap p { max-width: none; }
   .exp-row .n { font-size: 4.5rem; }
   .cat-group h3 { font-size: 24px; }
-  .detail-hero { padding-top: 22vh; }
+  .detail-hero { padding-top: 35vh; }
   .detail-hero h1 { font-size: 28px; }
   .foot-grid .big { font-size: 28px; }
   .testi-track { grid-template-columns: 1fr; }
