@@ -21,13 +21,27 @@ export function WorkGrid({ items }) {
   );
 }
 
+function ListThumb({ p }) {
+  const imgs = (p.media || []).filter((m) => m.type !== 'video');
+  const first = imgs[0]?.url || p.cover;
+  const second = imgs[1]?.url;
+  return (
+    <span className="list-thumb">
+      <img className="t0" src={first} alt="" loading="lazy" />
+      {second ? <img className="t1" src={second} alt="" loading="lazy" /> : null}
+    </span>
+  );
+}
+
 export function WorkList({ items }) {
   return (
     <div className="works-list">
       {items.map((p) => (
-        <Link key={p.id} to={`/p/${p.slug}`}>
-          <span>{p.title}</span>
-          <small>{p.tags?.join(', ')} · {p.year}</small>
+        <Link key={p.id} className="list-row" to={`/p/${p.slug}`}>
+          <ListThumb p={p} />
+          <span className="list-title">{p.title}</span>
+          <span className="list-tags">{(p.tags || []).join(', ')}</span>
+          <span className="list-year">{p.year}</span>
         </Link>
       ))}
     </div>
