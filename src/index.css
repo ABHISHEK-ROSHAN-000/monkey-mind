@@ -108,7 +108,7 @@ button { font-family: inherit; cursor: pointer; }
 .exp-lede-wrap { width: 50%; }
 .exp-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .expertise .lede { font-size: 32px; line-height: 1.2; letter-spacing: -.018em; font-weight: 400; color: var(--ink); margin: 0; }
-.exp-rows { border-bottom: 0; }
+.exp-rows { border-bottom: 1px solid var(--line-dark); }
 .exp-row { display: flex; align-items: start; padding: 36px 0; border-top: 0; }
 .exp-row + .exp-row { border-top: 1px solid var(--line-dark); }
 .exp-num-wrap { width: 50%; text-align: left; }
