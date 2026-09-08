@@ -1,4 +1,5 @@
 import { useSite } from '../lib/store.jsx';
+import InfoHero from '../components/InfoHero.jsx';
 import Expertise from '../components/Expertise.jsx';
 import Testimonials from '../components/Testimonials.jsx';
 
@@ -6,8 +7,8 @@ export default function About() {
   const { settings } = useSite();
   return (
     <>
+      <InfoHero />
       <section className="hero">
-        <h1>{settings.about.title}</h1>
         <p className="blurb">{settings.about.body}</p>
         <div className="hero-social">
           {settings.socials.map((s) => (

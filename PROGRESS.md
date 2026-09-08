@@ -4,8 +4,8 @@ Status key: done / ongoing / remaining
 ## Public site
 - Home (`/`) — done
 - All Projects (`/projects`) — done
-- Project Detail (`/p/:slug`) — ongoing
-- About / Info (`/info`) — remaining
+- Project Detail (`/p/:slug`) — done
+- About / Info (`/info`) — ongoing
 
 ## CMS admin
 - Admin Login (`/admin/login`) — remaining
