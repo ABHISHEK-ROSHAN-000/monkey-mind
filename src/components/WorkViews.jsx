@@ -13,7 +13,7 @@ export function WorkGrid({ items }) {
     <div className="works-grid">
       {items.map((p) => (
         <Link className="work-tile" key={p.id} to={`/p/${p.slug}`} title={p.title}>
-          <Thumb p={p} />
+          <span className="tile-frame"><Thumb p={p} /></span>
           <span className="tile-cap">{p.title}</span>
         </Link>
       ))}
