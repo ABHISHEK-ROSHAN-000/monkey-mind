@@ -2,17 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 
 const rnd = (n) => Math.floor(Math.random() * n);
-// Random subset of `count` indexes out of 12
-const pick = (count) => {
-  const pool = Array.from({ length: 12 }, (_, i) => i);
-  const out = new Set();
-  while (out.size < count && pool.length) out.add(pool.splice(rnd(pool.length), 1)[0]);
-  return out;
-};
+const MAX_AGE = 700; // force-hide anything visible this long (ticks are ≤0.7s apart, so life stays < 1.5s)
 
 // Info hero: full-bleed 4×3 photo grid over a giant centered title.
 // All 12 start invisible for 2s, then 4–7 random images are visible at any
-// time — every 1s the visible set drifts to a new random 4–7.
+// time. Every 0.4–0.7s the set drifts — and no image may stay visible longer
+// than ~1.4s (capped strictly under 1.5s).
 export default function InfoHero() {
   const { publishedProjects, settings } = useSite();
 
@@ -28,42 +23,64 @@ export default function InfoHero() {
     return urls.slice(0, 12);
   }, [publishedProjects]);
 
-  // hidden = indexes currently faded out. Start: everything hidden.
-  const [hidden, setHidden] = useState(() => new Set(cells.map((_, i) => i)));
+  const vis = useRef(new Set()); // visible indexes (source of truth)
+  const at = useRef(new Map()); // index -> timestamp revealed
   const live = useRef(false);
+  const [, bump] = useState(0);
+  const paint = () => bump((x) => x + 1);
 
   useEffect(() => {
     live.current = false;
+    vis.current = new Set();
+    at.current = new Map();
+    paint();
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setHidden(new Set());
+      cells.forEach((_, i) => {
+        vis.current.add(i);
+      });
+      paint();
       return;
     }
-    setHidden(new Set(cells.map((_, i) => i)));
     const start = setTimeout(() => {
-      const keep = pick(4 + rnd(4)); // 4–7 stay visible
-      setHidden(new Set(cells.map((_, i) => i).filter((i) => !keep.has(i))));
+      const now = Date.now();
+      const pool = cells.map((_, i) => i);
+      const count = 4 + rnd(4); // initial 4–7
+      for (let k = 0; k < count && pool.length; k++) {
+        const i = pool.splice(rnd(pool.length), 1)[0];
+        vis.current.add(i);
+        at.current.set(i, now);
+      }
       live.current = true;
+      paint();
     }, 2000);
     let timer;
     const tick = () => {
       if (live.current) {
-        const target = 4 + rnd(4); // new random 4–7
-        setHidden((prev) => {
-          const visible = cells.map((_, i) => i).filter((i) => !prev.has(i));
-          const next = new Set(prev);
-          while (visible.length > target) {
-            const i = visible.splice(rnd(visible.length), 1)[0];
-            next.add(i);
+        const now = Date.now();
+        // 1. age cap: hide everything visible >= 700ms
+        for (const i of [...vis.current]) {
+          if (now - (at.current.get(i) || 0) >= MAX_AGE) {
+            vis.current.delete(i);
+            at.current.delete(i);
           }
-          while (visible.length < target) {
-            const hid = [...next];
-            if (!hid.length) break;
-            const i = hid.splice(rnd(hid.length), 1)[0];
-            next.delete(i);
-            visible.push(i);
-          }
-          return next;
-        });
+        }
+        // 2. count drift to a fresh random 4–7
+        const target = 4 + rnd(4);
+        const visible = [...vis.current];
+        while (visible.length > target) {
+          const i = visible.splice(rnd(visible.length), 1)[0];
+          vis.current.delete(i);
+          at.current.delete(i);
+        }
+        while (visible.length < target) {
+          const hid = cells.map((_, i) => i).filter((i) => !vis.current.has(i));
+          if (!hid.length) break;
+          const i = hid[rnd(hid.length)];
+          vis.current.add(i);
+          at.current.set(i, now);
+          visible.push(i);
+        }
+        paint();
       }
       timer = setTimeout(tick, 400 + Math.random() * 300); // next drift in 0.4–0.7s
     };
@@ -73,6 +90,8 @@ export default function InfoHero() {
       clearTimeout(timer);
     };
   }, [cells]);
+
+  const hidden = new Set(cells.map((_, i) => i).filter((i) => !vis.current.has(i)));
 
   return (
     <section className="info-hero" aria-label={settings.about.title}>
