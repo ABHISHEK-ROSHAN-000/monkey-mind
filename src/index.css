@@ -70,8 +70,8 @@ button { font-family: inherit; cursor: pointer; }
 .work-tile:hover .tile-cap { opacity: 1; }
 
 /* Works: list — thumbnail rows (thumb | title | tags | year) */
-.works-list { border-top: 1px solid var(--line-dark); }
-.list-row { display: grid; grid-template-columns: 200px 1fr 1fr auto; gap: 32px; align-items: center; min-height: 160px; border-bottom: 1px solid var(--line-dark); transition: background .25s ease; }
+.works-list { border-top: 0; }
+.list-row { display: grid; grid-template-columns: 200px 1fr 1fr auto; gap: 32px; align-items: center; min-height: 160px; padding: 0 24px 0 0; border-bottom: 1px solid var(--line-dark); transition: background .25s ease; }
 .list-row:hover { background: #e9e9e9; }
 .list-thumb { position: relative; display: block; width: 200px; height: 160px; overflow: hidden; background: #e4e4e4; }
 .list-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .3s ease, transform .4s ease; }
@@ -177,7 +177,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .view-switch { max-width: none; width: 100%; margin-left: 0; }
   .view-switch button { font-size: 22px; }
   .works-grid { grid-template-columns: repeat(2, 1fr); }
-  .list-row { grid-template-columns: 80px 1fr auto; gap: 16px; min-height: 0; padding: 12px 0; }
+  .list-row { grid-template-columns: 80px 1fr auto; gap: 16px; min-height: 0; padding: 12px 12px 12px 0; }
   .list-thumb { width: 80px; height: 64px; }
   .list-tags { display: none; }
   .expertise .lede { font-size: 28px; }
