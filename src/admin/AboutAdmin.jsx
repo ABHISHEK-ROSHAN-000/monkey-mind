@@ -40,7 +40,7 @@ export default function AboutAdmin() {
           </div>
         ))}
         <div className="row" style={{ marginTop: 8 }}>
-          <button className="btn ghost" onClick={() => setExpertise([...expertise, { n: `0${expertise.length + 1}`, title: 'New service', text: 'Describe it…' }])}>+ Add service</button>
+          <button className="btn ghost" onClick={() => setExpertise([...expertise, { n: `${expertise.length + 1}`, title: 'New service', text: 'Describe it…' }])}>+ Add service</button>
         </div>
       </div>
       <div className="card">

@@ -8,10 +8,10 @@ export default function Footer() {
       <div className="wrap">
         <div className="foot-grid">
           <div>
-            <p style={{ color: 'var(--muted)', margin: '0 0 6px', fontSize: '.85rem' }}>Inquiries</p>
+            <p style={{ fontSize: '.82rem', fontWeight: 500, margin: '0 0 6px' }}>Inquiries</p>
             <a className="mail" href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a>
-            <p style={{ color: 'var(--muted)', margin: '18px 0 6px', fontSize: '.85rem' }}>Based in</p>
-            <p style={{ margin: 0 }}>{settings.location}</p>
+            <p style={{ fontSize: '.82rem', fontWeight: 500, margin: '18px 0 6px' }}>Based in</p>
+            <p style={{ margin: 0, fontSize: '.8rem', fontWeight: 500 }}>{settings.location}</p>
             <nav className="foot-nav">
               <Link to="/">Index</Link>
               <Link to="/projects">Projects</Link>

@@ -82,9 +82,9 @@ export const SITE_SETTINGS = {
     images: [CDN.purple, CDN.orange],
   },
   expertise: [
-    { n: '01', title: 'Branding', text: 'Defining the identity, positioning, and visual language that make a brand distinctive and coherent.' },
-    { n: '02', title: 'Packaging', text: 'Translating brand strategy into considered packaging that communicates clearly and earns attention on the shelf.' },
-    { n: '03', title: 'Creative Communication', text: 'Turning ideas into purposeful visual stories, campaigns, creative ads, motion graphics, and posters that drive engagement.' },
+    { n: '1', title: 'Branding', text: 'Defining the identity, positioning, and visual language that make a brand distinctive and coherent.' },
+    { n: '2', title: 'Packaging', text: 'Translating brand strategy into considered packaging that communicates clearly and earns attention on the shelf.' },
+    { n: '3', title: 'Creative Communication', text: 'Turning ideas into purposeful visual stories, campaigns, creative ads, motion graphics, and posters that drive engagement.' },
   ],
   testimonials: [
     { quote: 'Working with this team was seamless. They took our vision and turned it into a digital experience far beyond expectations.', name: 'Monica Lewinsky', role: 'Brand Manager — Neue' },

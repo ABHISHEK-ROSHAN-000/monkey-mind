@@ -4,7 +4,7 @@ export default function Expertise() {
   const { settings } = useSite();
   return (
     <section className="expertise">
-      <p style={{ color: 'var(--muted)' }}>Our Expertise</p>
+      <p style={{ fontSize: '.8rem', fontWeight: 500, margin: '0 0 12px' }}>Our Expertise</p>
       <p className="lede">{settings.about.lede}</p>
       <div className="exp-grid">
         {settings.expertise.map((e) => (
