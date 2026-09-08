@@ -102,11 +102,11 @@ button { font-family: inherit; cursor: pointer; }
 .exp-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .expertise .lede { font-size: 32px; line-height: 1.2; letter-spacing: -.018em; font-weight: 400; color: var(--ink); margin: 0; }
 .exp-rows { border-bottom: 0; }
-.exp-row { display: flex; align-items: start; padding: 28px 0; border-top: 0; }
+.exp-row { display: flex; align-items: start; padding: 36px 0; border-top: 0; }
 .exp-row + .exp-row { border-top: 1px solid var(--line-dark); }
 .exp-num-wrap { width: 50%; text-align: left; }
 .exp-content-wrap { width: 50%; display: flex; justify-content: space-between; gap: 32px; align-items: start; }
-.exp-row .n { font-weight: 300; font-size: 6rem; letter-spacing: -.024em; line-height: .8; color: var(--ink); }
+.exp-row .n { font-weight: 300; font-size: 7rem; letter-spacing: -.024em; line-height: .8; color: var(--ink); }
 .exp-content-wrap h3 { margin: 0; font-weight: 500; font-size: 16px; letter-spacing: -.02em; line-height: 1.2; white-space: nowrap; }
 .exp-content-wrap p { margin: 0; color: var(--muted); font-weight: 400; font-size: 14px; letter-spacing: -.018em; line-height: 1.2; max-width: 300px; }
 
