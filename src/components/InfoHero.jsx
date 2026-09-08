@@ -4,12 +4,20 @@ import { useSite } from '../lib/store.jsx';
 const rnd = (n) => Math.floor(Math.random() * n);
 const MAX_AGE = 700; // force-hide anything visible this long (ticks are ≤0.7s apart, so life stays < 1.5s)
 
-// Info hero: full-bleed 4×3 photo grid over a giant centered title.
-// All 12 start invisible for 2s, then 4–7 random images are visible at any
-// time. Every 0.4–0.7s the set drifts — and no image may stay visible longer
-// than ~1.4s (capped strictly under 1.5s).
+// Info hero: full-bleed photo grid (4×3 desktop, 4×4 mobile) over a giant
+// centered title. All cells start invisible for 2s, then 4–7 random images
+// are visible at any time. Every 0.4–0.7s the set drifts — and no image may
+// stay visible longer than ~1.4s (capped strictly under 1.5s).
 export default function InfoHero() {
   const { publishedProjects, settings } = useSite();
+  const COUNT = useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(max-width: 768px)').matches
+        ? 16
+        : 12,
+    []
+  );
 
   const cells = useMemo(() => {
     const urls = [];
@@ -19,9 +27,9 @@ export default function InfoHero() {
       }
       if (p.cover && !urls.includes(p.cover)) urls.push(p.cover);
     }
-    while (urls.length < 12) urls.push(`https://picsum.photos/seed/mm-info-${urls.length}/800/800`);
-    return urls.slice(0, 12);
-  }, [publishedProjects]);
+    while (urls.length < COUNT) urls.push(`https://picsum.photos/seed/mm-info-${urls.length}/800/800`);
+    return urls.slice(0, COUNT);
+  }, [publishedProjects, COUNT]);
 
   const vis = useRef(new Set()); // visible indexes (source of truth)
   const at = useRef(new Map()); // index -> timestamp revealed
