@@ -33,7 +33,9 @@ export default function Home() {
       </section>
 
       <div className="sec-head">
-        <h2>Selected Works<sup>({publishedProjects.length})</sup></h2>
+        <div className="sec-title">
+          <h2>Selected Works<sup>({publishedProjects.length})</sup></h2>
+        </div>
         <ViewSwitcher view={view} setView={setView} />
       </div>
       {view === 'grid' && <WorkGrid items={selected} />}
