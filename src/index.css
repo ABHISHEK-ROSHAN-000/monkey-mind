@@ -102,10 +102,12 @@ button { font-family: inherit; cursor: pointer; }
 .exp-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .expertise .lede { font-size: 32px; line-height: 1.2; letter-spacing: -.018em; font-weight: 400; color: var(--ink); margin: 0; }
 .exp-rows { border-bottom: 1px solid var(--line-dark); }
-.exp-row { display: grid; grid-template-columns: 1.2fr .8fr 1fr; gap: 32px; align-items: start; padding: 28px 0; border-top: 1px solid var(--line-dark); }
-.exp-row .n { font-weight: 300; font-size: 8rem; letter-spacing: -.024em; line-height: .8; color: var(--ink); }
-.exp-row h3 { margin: 0; font-weight: 500; font-size: 18px; letter-spacing: -.02em; line-height: 1.2; }
-.exp-row p { margin: 0; color: var(--muted); font-weight: 400; font-size: 16px; letter-spacing: -.018em; line-height: 1.2; }
+.exp-row { display: flex; align-items: start; padding: 28px 0; border-top: 1px solid var(--line-dark); }
+.exp-num-wrap { width: 50%; text-align: left; }
+.exp-content-wrap { width: 50%; display: flex; justify-content: space-between; gap: 32px; align-items: start; }
+.exp-row .n { font-weight: 300; font-size: 6rem; letter-spacing: -.024em; line-height: .8; color: var(--ink); }
+.exp-content-wrap h3 { margin: 0; font-weight: 500; font-size: 16px; letter-spacing: -.02em; line-height: 1.2; white-space: nowrap; }
+.exp-content-wrap p { margin: 0; color: var(--muted); font-weight: 400; font-size: 14px; letter-spacing: -.018em; line-height: 1.2; max-width: 360px; }
 
 /* Category groups (All Projects) */
 .cat-group { margin: 36px 0; }
@@ -162,8 +164,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 @media (max-width: 1100px) {
   .works-grid { grid-template-columns: repeat(3, 1fr); }
   .testi-track { grid-template-columns: 1fr 1fr; }
-  .exp-row { grid-template-columns: 1fr 1fr; }
-  .exp-row p { grid-column: 1 / -1; }
+  .exp-row { flex-wrap: wrap; }
+  .exp-num-wrap, .exp-content-wrap { width: 100%; }
 }
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1.2fr .8fr; row-gap: 20px; padding: 72px 0 40px; }
@@ -191,8 +193,9 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .expertise .lede { font-size: 24px; }
   .exp-head { flex-wrap: wrap; }
   .exp-label-wrap, .exp-lede-wrap { width: 100%; }
-  .exp-row { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
-  .exp-row .n { font-size: 4.5rem; }
+  .exp-row { padding: 20px 0; }
+  .exp-content-wrap { flex-wrap: wrap; row-gap: 8px; }
+  .exp-row .n { font-size: 3.5rem; }
   .cat-group h3 { font-size: 24px; }
   .detail-hero h1 { font-size: 3rem; }
   .foot-grid .big { font-size: 28px; }

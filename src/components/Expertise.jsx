@@ -15,9 +15,13 @@ export default function Expertise() {
       <div className="exp-rows">
         {settings.expertise.map((e) => (
           <div className="exp-row" key={e.title}>
-            <div className="n">{e.n}</div>
-            <h3>{e.title}</h3>
-            <p>{e.text}</p>
+            <div className="exp-num-wrap">
+              <div className="n">{e.n}</div>
+            </div>
+            <div className="exp-content-wrap">
+              <h3>{e.title}</h3>
+              <p>{e.text}</p>
+            </div>
           </div>
         ))}
       </div>
