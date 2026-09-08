@@ -214,7 +214,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .work-tile { aspect-ratio: auto; }
   .work-tile .tile-frame { position: relative; inset: auto; aspect-ratio: 1/1; }
   .work-tile .tile-cap { position: static; display: block; opacity: 1; text-align: center; padding: 8px 4px 4px; }
-  .list-row { grid-template-columns: 104px 1fr auto; gap: 16px; min-height: 0; padding: 12px 12px 12px 0; border-bottom: 0; }
+  .list-row { grid-template-columns: 104px 1fr auto; gap: 4px; min-height: 0; padding: 12px 12px 12px 0; border-bottom: 0; }
   .list-thumb { width: 104px; height: 84px; }
   .list-tags { display: none; }
   .list-spacer { display: none; }
