@@ -221,11 +221,11 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .expertise .lede { font-size: 24px; }
   .exp-head { flex-wrap: wrap; row-gap: 12px; }
   .exp-label-wrap, .exp-lede-wrap { width: 100%; }
-  .exp-row { padding: 20px 0; flex-wrap: nowrap; gap: 20px; }
+  .exp-row { padding: 28px 0; flex-wrap: nowrap; gap: 28px; }
   .exp-num-wrap { width: auto; flex-shrink: 0; }
   .exp-content-wrap { width: auto; flex: 1; flex-direction: column; align-items: flex-start; row-gap: 6px; }
   .exp-content-wrap p { max-width: none; }
-  .exp-row .n { font-size: 4rem; }
+  .exp-row .n { font-size: 4.5rem; }
   .cat-group h3 { font-size: 24px; }
   .detail-hero h1 { font-size: 3rem; }
   .foot-grid .big { font-size: 28px; }
