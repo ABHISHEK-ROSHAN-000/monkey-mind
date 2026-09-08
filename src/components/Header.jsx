@@ -25,7 +25,6 @@ export default function Header() {
         <nav className="mobile-menu">
           <Link to="/" onClick={() => setOpen(false)}>Index</Link>
           <Link to="/projects" onClick={() => setOpen(false)}>Projects</Link>
-          <Link to="/info" onClick={() => setOpen(false)}>Info</Link>
         </nav>
       )}
     </>
