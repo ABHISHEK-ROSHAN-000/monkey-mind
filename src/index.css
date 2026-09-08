@@ -78,7 +78,7 @@ button { font-family: inherit; cursor: pointer; }
 .list-thumb .t1 { opacity: 0; }
 .list-row:hover .list-thumb .t1 { opacity: 1; }
 .list-row:hover .list-thumb .t0:only-child { transform: scale(1.05); }
-.list-title { color: var(--ink); font-size: .8rem; font-weight: 500; padding-left: 24px; }
+.list-title { color: var(--ink); font-size: .8rem; font-weight: 500; padding-left: 12px; }
 .list-tags { color: #8f8f8f; font-size: .8rem; font-weight: 500; text-align: left; white-space: nowrap; }
 .list-spacer { min-width: 0; }
 .list-year { color: #8f8f8f; font-size: .8rem; font-weight: 500; text-align: right; }
