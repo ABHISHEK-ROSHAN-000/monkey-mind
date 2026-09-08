@@ -14,7 +14,7 @@ export default function InfoHero() {
     () =>
       typeof window !== 'undefined' &&
       window.matchMedia('(max-width: 768px)').matches
-        ? 16
+        ? 20
         : 12,
     []
   );
