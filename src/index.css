@@ -232,7 +232,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .testi-track { grid-template-columns: 1fr; }
   .inq-inner { min-height: 100vh; min-height: 100svh; padding-top: 96px; padding-bottom: 64px; }
   .inq-bottom .big { font-size: 28px; }
-  .colophon-inner { flex-direction: column; gap: 24px; padding-top: 0; justify-content: center; }
+  .colophon-inner { flex-direction: column; gap: 24px; padding-top: 16px; justify-content: flex-start; }
   .page-above { margin-bottom: 25vh; margin-bottom: 25svh; }
   .colophon { height: 25vh; height: 25svh; }
   .colophon-side { text-align: left; width: 100%; }
