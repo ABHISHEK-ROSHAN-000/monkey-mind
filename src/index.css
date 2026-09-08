@@ -233,8 +233,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .inq-inner { min-height: 100vh; min-height: 100svh; padding-top: 96px; padding-bottom: 100px; }
   .inq-bottom .big { font-size: 22px; }
   .colophon-inner { flex-direction: column; gap: 24px; padding-top: 16px; justify-content: flex-start; }
-  .page-above { margin-bottom: 25vh; margin-bottom: 25svh; }
-  .colophon { height: 25vh; height: 25svh; }
+  .page-above { margin-bottom: 30vh; margin-bottom: 30svh; }
+  .colophon { height: 30vh; height: 30svh; }
   .colophon-side { text-align: left; width: 100%; }
   .colophon-links { justify-content: space-between; flex-wrap: nowrap; }
   .admin-shell { grid-template-columns: 1fr; }
