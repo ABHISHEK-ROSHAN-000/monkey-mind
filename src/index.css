@@ -138,7 +138,7 @@ button { font-family: inherit; cursor: pointer; }
 .colophon { position: fixed; left: 0; right: 0; bottom: 0; height: 50vh; height: 50svh; z-index: 0; background: var(--bg); overflow: hidden; }
 .colophon-inner { display: flex; justify-content: space-between; align-items: start; padding-top: 8vh; height: 100%; }
 .colophon-mark { font-family: var(--font-head); font-weight: 600; font-size: 6.4rem; line-height: .8em; letter-spacing: -.024em; text-transform: uppercase; color: #212121; margin: 0; font-feature-settings: "blwf" on, "cv09" on, "cv03" on, "cv04" on, "cv11" on; }
-.colophon-side { text-align: right; padding-top: 8px; }
+.colophon-side { text-align: right; align-self: center; }
 .colophon-links { display: flex; gap: 18px; justify-content: flex-end; font-size: .8rem; font-weight: 500; }
 .colophon-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .colophon-note { color: #8f8f8f; font-size: .8rem; font-weight: 500; margin: 14px 0 0; }
