@@ -31,6 +31,11 @@ export default function InfoHero() {
     return urls.slice(0, COUNT);
   }, [publishedProjects, COUNT]);
 
+  // Visible-count band scales with grid density: 4–7 of 12 on desktop,
+  // 7–12 of 20 on mobile (same ~33–58% feel).
+  const lo = COUNT === 20 ? 7 : 4;
+  const hi = COUNT === 20 ? 12 : 7;
+  const band = () => lo + rnd(hi - lo + 1);
   const vis = useRef(new Set()); // visible indexes (source of truth)
   const at = useRef(new Map()); // index -> timestamp revealed
   const live = useRef(false);
@@ -52,7 +57,7 @@ export default function InfoHero() {
     const start = setTimeout(() => {
       const now = Date.now();
       const pool = cells.map((_, i) => i);
-      const count = 4 + rnd(4); // initial 4–7
+      const count = band(); // initial visible set
       for (let k = 0; k < count && pool.length; k++) {
         const i = pool.splice(rnd(pool.length), 1)[0];
         vis.current.add(i);
@@ -72,8 +77,8 @@ export default function InfoHero() {
             at.current.delete(i);
           }
         }
-        // 2. count drift to a fresh random 4–7
-        const target = 4 + rnd(4);
+        // 2. count drift to a fresh random band value
+        const target = band();
         const visible = [...vis.current];
         while (visible.length > target) {
           const i = visible.splice(rnd(visible.length), 1)[0];
