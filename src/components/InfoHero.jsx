@@ -44,29 +44,33 @@ export default function InfoHero() {
       setHidden(new Set(cells.map((_, i) => i).filter((i) => !keep.has(i))));
       live.current = true;
     }, 2000);
-    const t = setInterval(() => {
-      if (!live.current) return;
-      const target = 4 + rnd(4); // new random 4–7
-      setHidden((prev) => {
-        const visible = cells.map((_, i) => i).filter((i) => !prev.has(i));
-        const next = new Set(prev);
-        while (visible.length > target) {
-          const i = visible.splice(rnd(visible.length), 1)[0];
-          next.add(i);
-        }
-        while (visible.length < target) {
-          const hid = [...next];
-          if (!hid.length) break;
-          const i = hid.splice(rnd(hid.length), 1)[0];
-          next.delete(i);
-          visible.push(i);
-        }
-        return next;
-      });
-    }, 1000);
+    let timer;
+    const tick = () => {
+      if (live.current) {
+        const target = 4 + rnd(4); // new random 4–7
+        setHidden((prev) => {
+          const visible = cells.map((_, i) => i).filter((i) => !prev.has(i));
+          const next = new Set(prev);
+          while (visible.length > target) {
+            const i = visible.splice(rnd(visible.length), 1)[0];
+            next.add(i);
+          }
+          while (visible.length < target) {
+            const hid = [...next];
+            if (!hid.length) break;
+            const i = hid.splice(rnd(hid.length), 1)[0];
+            next.delete(i);
+            visible.push(i);
+          }
+          return next;
+        });
+      }
+      timer = setTimeout(tick, 400 + Math.random() * 300); // next drift in 0.4–0.7s
+    };
+    timer = setTimeout(tick, 200);
     return () => {
       clearTimeout(start);
-      clearInterval(t);
+      clearTimeout(timer);
     };
   }, [cells]);
 
