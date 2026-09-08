@@ -141,12 +141,12 @@ button { font-family: inherit; cursor: pointer; }
 .gallery.detail figcaption { position: absolute; left: 24px; bottom: 16px; color: #fff; font-size: .8rem; font-weight: 500; margin: 0; }
 
 /* Testimonials — 50/50 header + seamless continuous marquee (right to left) */
-.testis { width: 100vw; margin: 56px 0 56px calc(50% - 50vw); overflow: hidden; }
+.testis { width: 100vw; margin: 56px 0 88px calc(50% - 50vw); overflow: hidden; }
 .testi-head { display: flex; align-items: start; padding: 0 140px; }
 .testi-head > * { width: 50%; }
 .testi-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .testi-head h2 { font-weight: 500; font-size: 34px; letter-spacing: -.018em; line-height: 1.2; margin: 0; }
-.testi-marquee { overflow: hidden; margin: 56px 0 0; }
+.testi-marquee { overflow: hidden; margin: 88px 0 0; }
 .testi-track.flow { display: flex; width: max-content; animation: testi-flow 30s linear infinite; }
 .testi-track.flow .testi { flex: 0 0 min(880px, 80vw); margin-right: clamp(48px, 8vw, 160px); scroll-snap-align: none; }
 @keyframes testi-flow { to { transform: translateX(-50%); } }
