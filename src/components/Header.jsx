@@ -26,7 +26,6 @@ export default function Header() {
           <Link to="/" onClick={() => setOpen(false)}>Index</Link>
           <Link to="/projects" onClick={() => setOpen(false)}>Projects</Link>
           <Link to="/info" onClick={() => setOpen(false)}>Info</Link>
-          <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a>
         </nav>
       )}
     </>
