@@ -31,7 +31,7 @@ export default function ProjectEditor() {
       const uploaded = [];
       for (const f of arr) {
         const u = await uploadToCloudinary(f);
-        uploaded.push({ key: uid(), type: u.type, url: u.url, publicId: u.publicId, caption: f.name, order: form.media.length + uploaded.length });
+        uploaded.push({ key: uid(), type: f.type === 'image/gif' ? 'gif' : 'image', url: u.url, publicId: u.publicId, caption: f.name, order: form.media.length + uploaded.length });
       }
       setForm((f) => ({ ...f, media: [...f.media, ...uploaded], cover: f.cover || uploaded[0]?.url || f.cover }));
     } finally { setBusy(false); }
@@ -91,14 +91,14 @@ export default function ProjectEditor() {
           </div>
 
           <div className="card">
-            <b>Media (images, videos, GIFs) — drag order with ↑ ↓</b>
-            <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>Uploads go to Cloudinary when configured, else local preview placeholder.</p>
-            <input type="file" multiple accept="image/*,video/*,.gif" onChange={(e) => onFiles(e.target.files)} disabled={busy} />
+            <b>Media (images + GIFs) — drag order with ↑ ↓</b>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>Uploads go to Cloudinary when configured, else local preview placeholder. Images only.</p>
+            <input type="file" multiple accept="image/*,.gif" onChange={(e) => onFiles(e.target.files)} disabled={busy} />
             {busy && <p>Uploading…</p>}
             <div className="media-strip" style={{ marginTop: 12 }}>
               {[...form.media].sort((a, b) => a.order - b.order).map((m) => (
                 <div className="m" key={m.key}>
-                  {m.type === 'video' ? <video src={m.url} muted preload="metadata" /> : <img src={m.url} alt="" />}
+                  <img src={m.url} alt="" />
                   <div style={{ padding: 6, fontSize: '.75rem' }}>{m.type}
                     <div className="row" style={{ marginTop: 4 }}>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, -1)}>↑</button>

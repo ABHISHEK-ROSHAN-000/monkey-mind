@@ -4,7 +4,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { CATEGORIES, PROJECTS, SITE_SETTINGS } from '../data/placeholders.js';
 
-const KEY = 'mm_cms_v2';
+const KEY = 'mm_cms_v4';
 
 function seed() {
   return { projects: PROJECTS, categories: CATEGORIES, settings: SITE_SETTINGS };

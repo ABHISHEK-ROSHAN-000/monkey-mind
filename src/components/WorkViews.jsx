@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
 
 function Thumb({ p, ratio }) {
-  const m = p.media?.[0];
-  const src = m?.url || p.cover;
-  if (m?.type === 'video') {
-    return <video src={m.url} muted playsInline preload="metadata" style={{ width: '100%', height: '100%', aspectRatio: ratio || '1/1', objectFit: 'cover' }} />;
-  }
+  // Images only — skip any legacy video entries, fall back to cover.
+  const m = (p.media || []).find((x) => x.type !== 'video') || p.media?.[0];
+  const src = m?.type === 'video' ? p.cover : m?.url || p.cover;
   return <img src={src} alt={p.title} loading="lazy" style={{ width: '100%', height: '100%', aspectRatio: ratio || '1/1', objectFit: 'cover' }} />;
 }
 
