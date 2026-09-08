@@ -141,12 +141,12 @@ button { font-family: inherit; cursor: pointer; }
 .gallery.detail figcaption { position: absolute; left: 24px; bottom: 16px; color: #fff; font-size: .8rem; font-weight: 500; margin: 0; }
 
 /* Testimonials — 50/50 header + seamless continuous marquee (right to left) */
-.testis { margin: 56px 0; overflow: hidden; }
-.testi-head { display: flex; align-items: start; }
+.testis { width: 100vw; margin: 56px 0 56px calc(50% - 50vw); overflow: hidden; }
+.testi-head { display: flex; align-items: start; padding: 0 140px; }
 .testi-head > * { width: 50%; }
 .testi-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .testi-head h2 { font-weight: 500; font-size: 34px; letter-spacing: -.018em; line-height: 1.2; margin: 0; }
-.testi-marquee { overflow: hidden; margin: 56px calc(50% - 50vw) 0; }
+.testi-marquee { overflow: hidden; margin: 56px 0 0; }
 .testi-track.flow { display: flex; width: max-content; animation: testi-flow 30s linear infinite; }
 .testi-track.flow .testi { flex: 0 0 min(880px, 80vw); margin-right: clamp(48px, 8vw, 160px); scroll-snap-align: none; }
 @keyframes testi-flow { to { transform: translateX(-50%); } }
@@ -206,6 +206,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 /* Responsive */
 @media (max-width: 1100px) {
   .wrap { padding: 0 48px; }
+  .testi-head { padding: 0 48px; }
   .works-full .full-cap { padding: 0 48px; }
   .works-grid { grid-template-columns: repeat(3, 1fr); }
   .exp-row { flex-wrap: wrap; }
@@ -257,7 +258,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .detail-hero { padding-top: 35vh; }
   .detail-hero h1 { font-size: 28px; }
   .foot-grid .big { font-size: 28px; }
-  .testi-head { flex-wrap: wrap; }
+  .testi-head { flex-wrap: wrap; padding: 0 20px; }
   .testi-head > * { width: 100%; }
   .testi-head h2 { font-size: 24px; }
   .testi-track { margin-top: 36px; }
