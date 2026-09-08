@@ -5,15 +5,23 @@ export default function Testimonials() {
   if (!settings.testimonials?.length) return null;
   return (
     <section className="testis">
-      <p style={{ color: 'var(--muted)' }}>Testimonials</p>
-      <h2 style={{ fontWeight: 500 }}>Meet the people who experienced our work firsthand.</h2>
+      <div className="testi-head">
+        <p className="testi-label">Testimonials</p>
+        <h2>Meet the people who experienced our work firsthand and share what made the collaboration truly meaningful.</h2>
+      </div>
       <div className="testi-track">
-        {settings.testimonials.map((t, i) => (
-          <div className="testi" key={i}>
-            <q>{t.quote}</q>
-            <div className="who">{t.name} — {t.role}</div>
-          </div>
-        ))}
+        {settings.testimonials.map((t, i) => {
+          const parts = String(t.role || '').split('—');
+          const company = parts.length > 1 ? parts.pop().trim() : '';
+          return (
+            <div className="testi" key={i}>
+              {company && <p className="testi-brand">{company}</p>}
+              <q>{t.quote}</q>
+              <p className="who">{t.name}</p>
+              <p className="role">{t.role}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
