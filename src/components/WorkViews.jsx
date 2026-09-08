@@ -41,6 +41,7 @@ export function WorkList({ items }) {
           <ListThumb p={p} />
           <span className="list-title">{p.title}</span>
           <span className="list-tags">{(p.tags || []).join(', ')}</span>
+          <span className="list-spacer" aria-hidden="true" />
           <span className="list-year">{p.year}</span>
         </Link>
       ))}
