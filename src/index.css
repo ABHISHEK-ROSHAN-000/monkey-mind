@@ -133,7 +133,15 @@ button { font-family: inherit; cursor: pointer; }
 .testi q { font-size: 18px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
 .testi .who { color: var(--muted); margin-top: 12px; font-size: .82rem; font-weight: 500; }
 
-/* Inquiry footer — full-bleed slideshow bg (hard cut, no transition) + white overlay text */
+/* Footer uncover — page scrolls over a pinned colophon */
+.page-above { position: relative; z-index: 1; background: var(--bg); margin-bottom: 100vh; margin-bottom: 100svh; }
+.colophon { position: fixed; left: 0; right: 0; bottom: 0; height: 100vh; height: 100svh; z-index: 0; background: var(--bg); overflow: hidden; }
+.colophon-inner { display: flex; justify-content: space-between; align-items: start; padding-top: 12vh; height: 100%; }
+.colophon-mark { font-family: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif; font-weight: 800; font-size: clamp(4rem, 12vw, 11rem); line-height: .85; letter-spacing: -.04em; text-transform: uppercase; color: var(--ink); margin: 0; }
+.colophon-side { text-align: right; padding-top: 8px; }
+.colophon-links { display: flex; gap: 18px; justify-content: flex-end; font-size: .8rem; font-weight: 500; }
+.colophon-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.colophon-note { color: #8f8f8f; font-size: .8rem; font-weight: 500; margin: 14px 0 0; }
 .inquiry { position: relative; margin-top: 64px; overflow: hidden; background: #111; color: #fff; }
 .inq-bg { position: absolute; inset: 0; }
 .inq-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
@@ -210,6 +218,9 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .testi-track { grid-template-columns: 1fr; }
   .inq-inner { min-height: 92vh; padding-top: 96px; padding-bottom: 64px; }
   .inq-bottom .big { font-size: 28px; }
+  .colophon-inner { flex-direction: column; gap: 32px; padding-top: 10vh; }
+  .colophon-side { text-align: left; }
+  .colophon-links { justify-content: flex-start; flex-wrap: wrap; }
   .admin-shell { grid-template-columns: 1fr; }
   .admin-side { flex-direction: row; overflow-x: auto; }
   .mobile-menu { display: flex; flex-direction: column; gap: 8px; padding: 12px 24px; border-bottom: 1px solid var(--line); background: #fff; }

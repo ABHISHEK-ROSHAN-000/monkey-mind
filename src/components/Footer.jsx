@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../lib/store.jsx';
 
-export default function Footer() {
+export function Inquiry() {
   const { settings, publishedProjects } = useSite();
   const covers = publishedProjects.map((p) => p.media?.[0]?.url || p.cover).filter(Boolean);
   const [idx, setIdx] = useState(0);
@@ -30,6 +30,28 @@ export default function Footer() {
           <p className="big">Let&apos;s build something great together.</p>
           <p className="big"><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>
           <Link className="admin-link" to="/admin/login">Admin</Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export function Colophon() {
+  const { settings } = useSite();
+  const year = new Date().getFullYear();
+  return (
+    <footer className="colophon">
+      <div className="wrap colophon-inner">
+        <p className="colophon-mark">MONKEY<br />MIND</p>
+        <div className="colophon-side">
+          <nav className="colophon-links">
+            <Link to="/">Index</Link>
+            <Link to="/projects">Projects</Link>
+            {settings.socials.map((s) => (
+              <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+            ))}
+          </nav>
+          <p className="colophon-note">© {year} MMStudio. Built for creatives.</p>
         </div>
       </div>
     </footer>

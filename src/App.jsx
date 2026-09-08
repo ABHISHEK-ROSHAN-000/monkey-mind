@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { SiteProvider } from './lib/store.jsx';
 import Header from './components/Header.jsx';
-import Footer from './components/Footer.jsx';
+import { Inquiry, Colophon } from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
 import Projects from './pages/Projects.jsx';
 import ProjectDetail from './pages/ProjectDetail.jsx';
@@ -21,9 +21,12 @@ const AboutAdmin = lazy(() => import('./admin/AboutAdmin.jsx'));
 function PublicShell({ children }) {
   return (
     <>
-      <Header />
-      <main className="wrap">{children}</main>
-      <Footer />
+      <div className="page-above">
+        <Header />
+        <main className="wrap">{children}</main>
+        <Inquiry />
+      </div>
+      <Colophon />
     </>
   );
 }
