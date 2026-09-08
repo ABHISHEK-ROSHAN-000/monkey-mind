@@ -16,7 +16,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; overflow-x: clip; }
 body {
   background: var(--bg);
   color: var(--ink);
@@ -118,7 +118,7 @@ button { font-family: inherit; cursor: pointer; }
 .exp-content-wrap p { margin: 0; color: var(--muted); font-weight: 400; font-size: 14px; letter-spacing: -.018em; line-height: 1.2; max-width: 300px; }
 
 /* Info hero — full-bleed 4×3 flicker grid over giant centered title */
-.info-hero { width: 100vw; margin-left: calc(50% - 50vw); height: 100vh; height: 100svh; position: relative; overflow: hidden; background: var(--bg); }
+.info-hero { width: 100vw; margin-left: calc(50% - 50vw); margin-top: -56px; height: 100vh; height: 100svh; position: relative; overflow: hidden; background: var(--bg); }
 .info-title { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; margin: 0; font-weight: 400; font-size: clamp(4rem, 17vw, 16rem); letter-spacing: -.04em; line-height: .8; color: #171717; white-space: nowrap; }
 .info-grid { position: absolute; inset: 0; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; }
 .info-cell { overflow: hidden; background: transparent; }
