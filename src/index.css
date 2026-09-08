@@ -184,6 +184,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 
 /* Responsive */
 @media (max-width: 1100px) {
+  .wrap { padding: 0 48px; }
+  .works-full .full-cap { padding: 0 48px; }
   .works-grid { grid-template-columns: repeat(3, 1fr); }
   .testi-track { grid-template-columns: 1fr 1fr; }
   .exp-row { flex-wrap: wrap; }
