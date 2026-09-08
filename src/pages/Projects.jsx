@@ -8,12 +8,12 @@ export default function Projects() {
     <>
       <section className="hero" style={{ paddingBottom: 0 }}>
         <h1>Worked on</h1>
-        <p className="blurb">Every project grouped by discipline. Pick a category to jump in.</p>
-        <div className="hero-social">
+        {/* <p className="blurb">Every project grouped by discipline. Pick a category to jump in.</p> */}
+        {/* <div className="hero-social">
           {settings.socials.map((s) => (
             <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
           ))}
-        </div>
+        </div> */}
       </section>
       {sorted.map((c) => {
         const items = publishedProjects.filter((p) => p.categoryIds.includes(c.id));

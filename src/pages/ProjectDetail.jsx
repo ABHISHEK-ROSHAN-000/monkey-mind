@@ -4,7 +4,7 @@ import MediaGallery from '../components/MediaGallery.jsx';
 
 export default function ProjectDetail() {
   const { slug } = useParams();
-  const { getProject, publishedProjects } = useSite();
+  const { getProject } = useSite();
   const p = getProject(slug);
   if (!p || p.status !== 'published') {
     return (
@@ -14,9 +14,6 @@ export default function ProjectDetail() {
       </section>
     );
   }
-  const idx = publishedProjects.findIndex((x) => x.id === p.id);
-  const prev = publishedProjects[idx - 1];
-  const next = publishedProjects[idx + 1];
   return (
     <>
       <section className="detail-hero">
@@ -27,11 +24,10 @@ export default function ProjectDetail() {
           <span>{p.tags?.join(', ')}</span>
         </div>
       </section>
-      <MediaGallery media={p.media?.length ? p.media : [{ key: 'cover', type: 'image', url: p.cover, order: 0 }]} />
-      <div className="pager">
-        <span>{prev ? <Link to={`/p/${prev.slug}`}>← {prev.title}</Link> : <span />}</span>
-        <span>{next ? <Link to={`/p/${next.slug}`}>{next.title} →</Link> : <span />}</span>
-      </div>
+      <MediaGallery
+        variant="detail"
+        media={p.media?.length ? p.media : [{ key: 'cover', type: 'image', url: p.cover, order: 0 }]}
+      />
     </>
   );
 }
