@@ -16,6 +16,16 @@ function load() {
     if (!raw) return seed();
     const j = JSON.parse(raw);
     if (!j.projects || !j.settings) return seed();
+    // Normalize legacy expertise numerals ("01" -> "1")
+    if (j.settings?.expertise) {
+      j.settings = {
+        ...j.settings,
+        expertise: j.settings.expertise.map((e) => ({
+          ...e,
+          n: String(e.n ?? '').replace(/^0+(\d)/, '$1'),
+        })),
+      };
+    }
     return j;
   } catch {
     return seed();
