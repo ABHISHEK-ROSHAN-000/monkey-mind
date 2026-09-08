@@ -147,7 +147,7 @@ button { font-family: inherit; cursor: pointer; }
 .testi-label { font-size: .8rem; font-weight: 500; margin: 6px 0 0; }
 .testi-head h2 { font-weight: 500; font-size: 34px; letter-spacing: -.018em; line-height: 1.2; margin: 0; }
 .testi-marquee { overflow: hidden; margin: 56px calc(50% - 50vw) 0; }
-.testi-track.flow { display: flex; width: max-content; margin-left: 140px; animation: testi-flow 30s linear infinite; }
+.testi-track.flow { display: flex; width: max-content; animation: testi-flow 30s linear infinite; }
 .testi-track.flow .testi { flex: 0 0 min(880px, 80vw); margin-right: clamp(48px, 8vw, 160px); scroll-snap-align: none; }
 @keyframes testi-flow { to { transform: translateX(-50%); } }
 .testi-marquee:hover .testi-track.flow, .testi-marquee:active .testi-track.flow { animation-play-state: paused; }
@@ -208,7 +208,6 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .wrap { padding: 0 48px; }
   .works-full .full-cap { padding: 0 48px; }
   .works-grid { grid-template-columns: repeat(3, 1fr); }
-  .testi-track { margin-left: 48px; }
   .exp-row { flex-wrap: wrap; }
   .exp-num-wrap, .exp-content-wrap { width: 100%; }
 }
@@ -261,7 +260,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .testi-head { flex-wrap: wrap; }
   .testi-head > * { width: 100%; }
   .testi-head h2 { font-size: 24px; }
-  .testi-track { margin-left: 20px; margin-top: 36px; }
+  .testi-track { margin-top: 36px; }
   .testi-track.flow .testi { flex-basis: 82vw; }
   .testi-brand { font-size: 26px; margin-bottom: 20px; }
   .testi q { font-size: 22px; }
