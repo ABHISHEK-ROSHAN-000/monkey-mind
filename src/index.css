@@ -95,7 +95,7 @@ button { font-family: inherit; cursor: pointer; }
 .works-full .full-cap { max-width: var(--max); margin: 10px auto 34px; padding: 0 140px; font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
 
 /* Expertise — label-left/lede-right header + ruled 3-column rows */
-.expertise { margin: 64px 0; }
+.expertise { margin: 120px 0 64px; }
 .exp-head { display: flex; align-items: baseline; margin-bottom: 24px; }
 .exp-label-wrap { width: 50%; text-align: left; }
 .exp-lede-wrap { width: 50%; }
