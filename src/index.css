@@ -49,12 +49,12 @@ button { font-family: inherit; cursor: pointer; }
 .hero .hero-social a:hover { text-decoration: underline; text-underline-offset: 4px; }
 /* Section heads — template preset 5nlege: Switzer 500, 34px, -.018em, lh 1.2 */
 .sec-head { display: flex; align-items: baseline; gap: 24px; margin: 40px 0 20px; }
-.sec-head h2 { font-family: var(--font-body); font-weight: 500; font-size: 34px; letter-spacing: -.018em; line-height: 1.2; margin: 0; white-space: nowrap; }
+.sec-head h2 { font-family: var(--font-body); font-weight: 500; font-size: 28px; letter-spacing: -.018em; line-height: 1.2; margin: 0; white-space: nowrap; }
 .sec-head h2 sup { font-size: .75rem; font-weight: 500; margin-left: 2px; }
 
 /* View switcher — large spread text tabs */
 .view-switch { display: flex; flex: 1; justify-content: space-between; max-width: 720px; margin-left: auto; }
-.view-switch button { border: 0; background: transparent; padding: 0; font-size: 34px; font-weight: 500; letter-spacing: -.018em; line-height: 1.2; color: var(--tab-dim); transition: color .15s ease; }
+.view-switch button { border: 0; background: transparent; padding: 0; font-size: 28px; font-weight: 500; letter-spacing: -.018em; line-height: 1.2; color: var(--tab-dim); transition: color .15s ease; }
 .view-switch button:hover { color: var(--ink); }
 .view-switch button.on { color: var(--ink); }
 
