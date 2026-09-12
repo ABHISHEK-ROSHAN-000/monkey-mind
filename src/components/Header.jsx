@@ -14,6 +14,7 @@ export default function Header() {
           <nav className="topnav main-nav">
             <NavLink to="/" end className={textLink}>Index</NavLink>
             <NavLink to="/projects" className={textLink}>Projects</NavLink>
+            <NavLink to="/info" className={textLink}>About</NavLink>
           </nav>
           <a className="topmail main-nav" href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a>
           <button className={`menu-btn${open ? ' open' : ''}`} onClick={() => setOpen((v) => !v)} aria-label="Menu" aria-expanded={open}>
@@ -25,6 +26,7 @@ export default function Header() {
         <nav className="mobile-menu">
           <Link to="/" onClick={() => setOpen(false)}>Index</Link>
           <Link to="/projects" onClick={() => setOpen(false)}>Projects</Link>
+          <Link to="/info" onClick={() => setOpen(false)}>About</Link>
         </nav>
       )}
     </>

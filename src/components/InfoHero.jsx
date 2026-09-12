@@ -2,22 +2,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 
 const rnd = (n) => Math.floor(Math.random() * n);
-const MAX_AGE = 700; // force-hide anything visible this long (ticks are ≤0.7s apart, so life stays < 1.5s)
+const MAX_AGE = 1000; // force-hide anything visible this long (ticks are ≤0.9s apart, so life stays < 2s)
 
-// Info hero: full-bleed photo grid (4×3 desktop, 4×4 mobile) over a giant
-// centered title. All cells start invisible for 2s, then 4–7 random images
-// are visible at any time. Every 0.4–0.7s the set drifts — and no image may
-// stay visible longer than ~1.4s (capped strictly under 1.5s).
+// Info hero: full-bleed photo grid (4×3 desktop, 3×4 mobile) over a giant
+// centered title. All cells start invisible for 0.7s, then 4–7 random images
+// are visible at any time. Every 0.6–0.9s the set drifts — and no image may
+// stay visible longer than ~1.9s (capped strictly under 2s).
 export default function InfoHero() {
   const { publishedProjects, settings } = useSite();
-  const COUNT = useMemo(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(max-width: 768px)').matches
-        ? 20
-        : 12,
-    []
-  );
+  const COUNT = 12;
 
   const cells = useMemo(() => {
     const urls = [];
@@ -31,10 +24,9 @@ export default function InfoHero() {
     return urls.slice(0, COUNT);
   }, [publishedProjects, COUNT]);
 
-  // Visible-count band scales with grid density: 4–7 of 12 on desktop,
-  // 7–12 of 20 on mobile (same ~33–58% feel).
-  const lo = COUNT === 20 ? 7 : 4;
-  const hi = COUNT === 20 ? 12 : 7;
+  // Visible-count band: 4–7 of 12 on desktop and mobile.
+  const lo = 4;
+  const hi = 7;
   const band = () => lo + rnd(hi - lo + 1);
   const vis = useRef(new Set()); // visible indexes (source of truth)
   const at = useRef(new Map()); // index -> timestamp revealed
@@ -65,12 +57,12 @@ export default function InfoHero() {
       }
       live.current = true;
       paint();
-    }, 2000);
+    }, 700);
     let timer;
     const tick = () => {
       if (live.current) {
         const now = Date.now();
-        // 1. age cap: hide everything visible >= 700ms
+        // 1. age cap: hide everything visible >= 1000ms
         for (const i of [...vis.current]) {
           if (now - (at.current.get(i) || 0) >= MAX_AGE) {
             vis.current.delete(i);
@@ -95,7 +87,7 @@ export default function InfoHero() {
         }
         paint();
       }
-      timer = setTimeout(tick, 400 + Math.random() * 300); // next drift in 0.4–0.7s
+      timer = setTimeout(tick, 600 + Math.random() * 300); // next drift in 0.6–0.9s
     };
     timer = setTimeout(tick, 200);
     return () => {
