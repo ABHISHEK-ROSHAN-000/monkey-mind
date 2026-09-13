@@ -1,4 +1,17 @@
 <!doctype html>
 <html><head><meta charset="utf-8" /><title>Monkey Mind</title>
-<script>sessionStorage.setItem('mm_path', location.pathname + location.search); location.replace('./');</script>
+<script>
+(function () {
+  try {
+    // Remember the full deep link, then bounce to the site root so index.html loads.
+    sessionStorage.setItem('mm_path', location.pathname + location.search);
+    var seg = location.pathname.split('/').filter(Boolean)[0] || '';
+    // Top-level app routes (projects|p|info|admin) mean root hosting (custom
+    // domain / local). Any other first segment is the repo subpath
+    // (e.g. /monkey-mind/...) — redirect there, not to a nested folder.
+    var root = seg === '' || /^(projects|p|info|admin)$/.test(seg) ? '/' : '/' + seg + '/';
+    location.replace(root);
+  } catch (e) { location.replace('./'); }
+})();
+</script>
 </head><body>Redirecting…</body></html>

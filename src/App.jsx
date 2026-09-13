@@ -35,10 +35,19 @@ const AdminSuspense = ({ children }) => (
   <Suspense fallback={<main className="wrap"><p>Loading admin…</p></main>}>{children}</Suspense>
 );
 
+// GitHub project pages serves the app under /monkey-mind/; a future custom
+// domain (and local dev/preview) serves it at root. Detect the base at
+// runtime so one build works everywhere without config changes.
+const basename =
+  typeof window !== 'undefined' &&
+  window.location.pathname.split('/').filter(Boolean)[0] === 'monkey-mind'
+    ? '/monkey-mind'
+    : '/';
+
 export default function App() {
   return (
     <SiteProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <Routes>
           <Route path="/" element={<PublicShell><Home /></PublicShell>} />
           <Route path="/projects" element={<PublicShell><Projects /></PublicShell>} />
