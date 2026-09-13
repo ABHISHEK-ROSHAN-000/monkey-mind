@@ -1,19 +1,23 @@
-// Demo-local auth. If Firebase Auth is configured, Login.jsx will use it;
-// otherwise this session-flag fallback keeps the first draft usable.
-const KEY = 'mm_admin_session';
+// Firebase-only admin session. There is no demo fallback: without a
+// configured Firebase Auth user, the CMS refuses to sign in.
+import { auth } from '../lib/firebase.js';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
-export function isAuthed() {
-  try { return sessionStorage.getItem(KEY) === '1'; } catch { return false; }
-}
-export function demoLogin(email, password) {
-  const okEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'admin@mmstudio.in').toLowerCase();
-  const okPass = import.meta.env.VITE_ADMIN_PASSWORD || 'monkeymind123';
-  if (email.trim().toLowerCase() === okEmail && password === okPass) {
-    try { sessionStorage.setItem(KEY, '1'); } catch { /* ignore */ }
-    return true;
+// Calls cb(user | null) on every auth change. Returns an unsubscribe fn.
+export function watchAuth(cb) {
+  if (!auth) {
+    cb(null);
+    return () => {};
   }
-  return false;
+  return onAuthStateChanged(auth, cb);
 }
-export function demoLogout() {
-  try { sessionStorage.removeItem(KEY); } catch { /* ignore */ }
+
+export async function adminLogout() {
+  if (auth) {
+    try {
+      await signOut(auth);
+    } catch {
+      /* ignore — session already dead */
+    }
+  }
 }

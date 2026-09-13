@@ -23,8 +23,10 @@ npm run build    # -> dist/
 npm run preview  # serve dist/
 ```
 
-Demo admin (Firebase NOT configured): `admin@mmstudio.in` / `monkeymind123`
-(override via `VITE_ADMIN_*`). CMS data persists in `localStorage` (`mm_cms_v1`).
+Admin: sign in at `/admin/login` with your Firebase Auth user. CMS data lives
+in Firestore (`projects`, `categories`, `siteSettings/site`) — entries are
+live for everyone. Deletes are permanent; media deletes remove the reference
+only (purge hosted files in the Cloudinary dashboard).
 
 ## Production wiring
 
@@ -36,8 +38,9 @@ Demo admin (Firebase NOT configured): `admin@mmstudio.in` / `monkeymind123`
 4. GitHub Pages: push to `main` → Actions workflow builds `dist/` and deploys.
    Add custom domain via `CNAME` + DNS; HTTPS auto.
 
-## What's placeholder in this draft
+## Content
 
-- Project images use `picsum.photos` seeds + one sample mp4 (see `src/data/placeholders.js`).
-- One sample GIF entry on "Lotion" proves GIF rendering.
-- Replace copy/media in `/admin` — no code changes needed.
+- All projects, categories, copy and testimonials are managed in `/admin` —
+  no code changes needed. Uploads go to Cloudinary; data goes to Firestore.
+- Media deletes in the CMS remove the reference only; purge hosted files in
+  the Cloudinary dashboard when needed.

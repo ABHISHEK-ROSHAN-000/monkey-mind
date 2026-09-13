@@ -7,17 +7,17 @@ Status key: done / ongoing / remaining
 - Project Detail (`/p/:slug`) — done
 - About / Info (`/info`) — done
 
-## CMS admin
-- Admin Login (`/admin/login`) — remaining
-- Dashboard (`/admin`) — remaining
-- Projects list (`/admin/projects`) — remaining
-- Project editor (`/admin/projects/:id`) — remaining
-- Categories (`/admin/categories`) — remaining
-- Home Featured (`/admin/featured`) — remaining
-- About / Info editor (`/admin/about`) — remaining
+## CMS admin (Firebase-backed, live for everyone)
+- Admin Login (`/admin/login`) — done
+- Dashboard (`/admin`) — done
+- Projects list (`/admin/projects`) — done
+- Project editor (`/admin/projects/:id`) — done
+- Categories (`/admin/categories`) — done
+- Home Featured (`/admin/featured`) — done
+- About / Info editor (`/admin/about`) — done
 
 ## Launch
-- Firebase production wiring — remaining
-- Cloudinary production wiring — remaining
-- Real photos + copy swap — remaining
-- GitHub Pages + domain deploy — remaining
+- Firebase production wiring — ongoing (code + secrets done; paste rules + create admin user in console)
+- Cloudinary production wiring — ongoing (preset `monkey-mind` must be Unsigned)
+- Real photos + copy swap — remaining (client enters via /admin)
+- GitHub Pages + domain deploy — ongoing (default URL now; custom domain later)

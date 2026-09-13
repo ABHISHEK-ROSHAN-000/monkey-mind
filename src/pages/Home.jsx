@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSite } from '../lib/store.jsx';
 import Expertise from '../components/Expertise.jsx';
 import { WorkGrid, WorkList, WorkFeed, WorkFull, ViewSwitcher } from '../components/WorkViews.jsx';
 
 export default function Home() {
-  const { publishedProjects, featuredProjects, settings } = useSite();
+  const { publishedProjects, featuredProjects, settings, loading } = useSite();
   const [view, setView] = useState('grid');
   // Selected Works grid is a fixed 8 boxes: featured first (in featured order),
   // then filled with remaining published projects by order.
@@ -38,10 +39,20 @@ export default function Home() {
         </div>
         <ViewSwitcher view={view} setView={setView} />
       </div>
-      {view === 'grid' && <WorkGrid items={selected} />}
-      {view === 'list' && <WorkList items={selected} />}
-      {view === 'feed' && <WorkFeed items={selected} />}
-      {view === 'full' && <WorkFull items={selected} />}
+      {loading ? (
+        <p style={{ color: 'var(--muted)' }}>Loading works…</p>
+      ) : publishedProjects.length === 0 ? (
+        <div className="card">
+          <p style={{ color: 'var(--muted)' }}>No published projects yet — add them in <Link to="/admin/projects" style={{ textDecoration: 'underline' }}>CMS → Projects</Link>.</p>
+        </div>
+      ) : (
+        <>
+          {view === 'grid' && <WorkGrid items={selected} />}
+          {view === 'list' && <WorkList items={selected} />}
+          {view === 'feed' && <WorkFeed items={selected} />}
+          {view === 'full' && <WorkFull items={selected} />}
+        </>
+      )}
 
       <Expertise />
     </>

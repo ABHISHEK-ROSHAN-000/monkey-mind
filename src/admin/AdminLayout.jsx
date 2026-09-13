@@ -1,14 +1,12 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { demoLogout } from './auth.js';
 import { auth } from '../lib/firebase.js';
 import { signOut } from 'firebase/auth';
 
 export default function AdminLayout() {
   const nav = useNavigate();
   const logout = async () => {
-    if (auth?.currentUser) { try { await signOut(auth); } catch { /* ignore */ } }
-    demoLogout();
-    nav('/admin/login');
+    if (auth) { try { await signOut(auth); } catch { /* ignore */ } }
+    nav('/admin/login', { replace: true });
   };
   const link = ({ isActive }) => (isActive ? 'on' : '');
   return (

@@ -15,8 +15,11 @@ export default function Projects() {
           ))}
         </div> */}
       </section>
+      {sorted.length === 0 && (
+        <p style={{ color: 'var(--muted)' }}>No categories yet — add them in the CMS.</p>
+      )}
       {sorted.map((c) => {
-        const items = publishedProjects.filter((p) => p.categoryIds.includes(c.id));
+        const items = publishedProjects.filter((p) => (p.categoryIds || []).includes(c.id));
         return (
           <section className="cat-group" key={c.id} id={c.slug}>
             <h3>{c.name} <sup>({items.length})</sup></h3>

@@ -31,7 +31,6 @@ export default function InfoHero() {
       }
       if (p.cover && !urls.includes(p.cover)) urls.push(p.cover);
     }
-    while (urls.length < COUNT) urls.push(`https://picsum.photos/seed/mm-info-${urls.length}/800/800`);
     return urls.slice(0, COUNT);
   }, [publishedProjects, COUNT]);
 
@@ -53,6 +52,14 @@ export default function InfoHero() {
     timer = setTimeout(advance, STATE_MS);
     return () => clearTimeout(timer);
   }, [cells]);
+
+  if (!cells.length) {
+    return (
+      <section className="info-hero" aria-label={settings.about.title}>
+        <h1 className="info-title">{settings.about.title}</h1>
+      </section>
+    );
+  }
 
   return (
     <section className="info-hero" aria-label={settings.about.title}>

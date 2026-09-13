@@ -26,7 +26,7 @@ export default function ProjectDetail() {
       </section>
       <MediaGallery
         variant="detail"
-        media={p.media?.length ? p.media : [{ key: 'cover', type: 'image', url: p.cover, order: 0 }]}
+        media={p.media?.length ? p.media : (p.cover ? [{ key: 'cover', type: 'image', url: p.cover, order: 0 }] : [])}
       />
     </>
   );

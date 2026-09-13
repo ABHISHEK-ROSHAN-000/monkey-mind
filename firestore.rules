@@ -1,18 +1,55 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() { return request.auth != null; }
-    match /projects/{id} {
-      allow read: if resource.data.status == 'published' || isAdmin();
-      allow write: if isAdmin();
+    // CMS admins. To add more people later: append their login email here,
+    // publish these rules again, and create their user in
+    // Firebase console → Authentication → Users.
+    function adminEmails() {
+      return ['shadowlock689@gmail.com'];
     }
-    match /categories/{id} {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email in adminEmails();
+    }
+
+    function isValidProject(slug) {
+      let d = request.resource.data;
+      return d.slug == slug
+        && d.title is string && d.title.size() >= 1 && d.title.size() <= 200
+        && d.status in ['published', 'draft']
+        && d.order is number
+        && d.cover is string
+        && d.excerpt is string && d.body is string && d.year is string
+        && d.categoryIds is list && d.tags is list && d.media is list
+        && d.featured is bool && d.featuredOrder is number;
+    }
+
+    match /projects/{slug} {
+      // Public visitors see published work; admins see everything (incl. drafts).
+      allow get: if resource.data.status == 'published' || isAdmin();
+      allow list: if resource.data.status == 'published' || isAdmin();
+      allow create, update: if isAdmin() && isValidProject(slug);
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{slug} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if isAdmin()
+        && request.resource.data.slug == slug
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.order is number;
+      allow delete: if isAdmin();
     }
+
     match /siteSettings/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Everything else is closed by default.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
