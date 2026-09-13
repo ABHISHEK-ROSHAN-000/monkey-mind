@@ -136,7 +136,7 @@ button { font-family: inherit; cursor: pointer; }
 .exp-content-wrap h3 { margin: 0; font-weight: 500; font-size: 16px; letter-spacing: -.02em; line-height: 1.2; white-space: nowrap; }
 .exp-content-wrap p { margin: 0; color: var(--muted); font-weight: 400; font-size: 14px; letter-spacing: -.018em; line-height: 1.2; max-width: 300px; }
 
-/* Info hero — full-bleed 5-state mosaic grid (4×3 desktop, 3×4 mobile) over giant centered title */
+/* Info hero — full-bleed 5-state mosaic grid (4×3 desktop, 3×3 mobile) over giant centered title */
 .info-hero { width: 100vw; margin-left: calc(50% - 50vw); margin-top: -56px; height: 100vh; height: 100svh; position: relative; overflow: hidden; background: var(--bg); opacity: 0; animation: info-in .8s ease 1s forwards; }
 @keyframes info-in { to { opacity: 1; } }
 .info-title { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; margin: 0; font-weight: 400; font-size: clamp(4rem, 17vw, 16rem); letter-spacing: -.04em; line-height: .8; color: #171717; white-space: nowrap; }
@@ -271,7 +271,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 @media (max-width: 768px) {
   .wrap { padding: 0 20px; }
   .topnav.main-nav, .topmail.main-nav { display: none; }
-  .info-hero { height: 75vh; height: 75svh; }
+  .info-hero { height: 75vh; height: 75svh; margin-top: 0; }
   .info-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
   .site-header .topbar { grid-template-columns: 1fr auto; }
   .menu-btn { display: inline-block; }
