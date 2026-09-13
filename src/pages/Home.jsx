@@ -35,12 +35,16 @@ export default function Home() {
 
       <div className="sec-head">
         <div className="sec-title">
-          <h2>Selected Works<sup>({publishedProjects.length})</sup></h2>
+          <h2>Selected Works{!loading && <sup>({publishedProjects.length})</sup>}</h2>
         </div>
         <ViewSwitcher view={view} setView={setView} />
       </div>
       {loading ? (
-        <p style={{ color: 'var(--muted)' }}>Loading works…</p>
+        <div className="works-grid" aria-hidden="true">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className="work-tile skel"><span className="tile-frame skel-box" /></span>
+          ))}
+        </div>
       ) : publishedProjects.length === 0 ? (
         <div className="card">
           {syncError ? (
