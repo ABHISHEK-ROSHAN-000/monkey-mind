@@ -2,7 +2,7 @@ import { useSite } from '../lib/store.jsx';
 import { WorkGrid } from '../components/WorkViews.jsx';
 
 export default function Projects() {
-  const { categories, publishedProjects, settings } = useSite();
+  const { categories, publishedProjects, syncError } = useSite();
   const sorted = [...categories].sort((a, b) => a.order - b.order);
   return (
     <>
@@ -15,7 +15,10 @@ export default function Projects() {
           ))}
         </div> */}
       </section>
-      {sorted.length === 0 && (
+      {syncError && (
+        <p style={{ color: '#b3261e' }}>Couldn't load content: {syncError}</p>
+      )}
+      {sorted.length === 0 && !syncError && (
         <p style={{ color: 'var(--muted)' }}>No categories yet — add them in the CMS.</p>
       )}
       {sorted.map((c) => {

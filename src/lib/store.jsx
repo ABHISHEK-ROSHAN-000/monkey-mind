@@ -3,13 +3,16 @@
 // to all visitors. Documents: projects/{slug}, categories/{slug},
 // siteSettings/site (single doc).
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { db } from './firebase.js';
+import { auth, db } from './firebase.js';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
   collection,
   doc,
   getDoc,
   onSnapshot,
+  query,
   setDoc,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 
@@ -59,6 +62,7 @@ export function SiteProvider({ children }) {
   const [settings, setSettings] = useState(EMPTY_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [syncError, setSyncError] = useState('');
+  const [isAdminUser, setIsAdminUser] = useState(false);
 
   useEffect(() => {
     try {
@@ -67,11 +71,20 @@ export function SiteProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    if (!auth) {
+      setIsAdminUser(false);
+      return;
+    }
+    return onAuthStateChanged(auth, (u) => setIsAdminUser(!!u));
+  }, []);
+
+  useEffect(() => {
     if (!db) {
       setLoading(false);
       setSyncError('Firebase is not configured. Add VITE_FIREBASE_* to .env (see .env.example).');
       return;
     }
+    setSyncError('');
     let ready = 0;
     const markReady = () => {
       ready += 1;
@@ -81,8 +94,14 @@ export function SiteProvider({ children }) {
       setSyncError(e?.message || 'Sync failed. Check connection and Firestore rules.');
       markReady();
     };
+    // Rules are not filters: an unfiltered collection scan is denied for
+    // anonymous visitors, so they subscribe with a matching status filter
+    // (admins keep the unfiltered scan and also see drafts).
+    const projectsQuery = isAdminUser
+      ? collection(db, 'projects')
+      : query(collection(db, 'projects'), where('status', '==', 'published'));
     const u1 = onSnapshot(
-      collection(db, 'projects'),
+      projectsQuery,
       (snap) => {
         setProjects(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
         markReady();
@@ -110,7 +129,7 @@ export function SiteProvider({ children }) {
       u2();
       u3();
     };
-  }, []);
+  }, [isAdminUser]);
 
   const api = useMemo(() => {
     const publishedProjects = projects

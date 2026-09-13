@@ -5,7 +5,7 @@ import Expertise from '../components/Expertise.jsx';
 import { WorkGrid, WorkList, WorkFeed, WorkFull, ViewSwitcher } from '../components/WorkViews.jsx';
 
 export default function Home() {
-  const { publishedProjects, featuredProjects, settings, loading } = useSite();
+  const { publishedProjects, featuredProjects, settings, loading, syncError } = useSite();
   const [view, setView] = useState('grid');
   // Selected Works grid is a fixed 8 boxes: featured first (in featured order),
   // then filled with remaining published projects by order.
@@ -43,7 +43,11 @@ export default function Home() {
         <p style={{ color: 'var(--muted)' }}>Loading works…</p>
       ) : publishedProjects.length === 0 ? (
         <div className="card">
-          <p style={{ color: 'var(--muted)' }}>No published projects yet — add them in <Link to="/admin/projects" style={{ textDecoration: 'underline' }}>CMS → Projects</Link>.</p>
+          {syncError ? (
+            <p style={{ color: '#b3261e' }}>Couldn't load projects: {syncError}</p>
+          ) : (
+            <p style={{ color: 'var(--muted)' }}>No published projects yet — add them in <Link to="/admin/projects" style={{ textDecoration: 'underline' }}>CMS → Projects</Link>.</p>
+          )}
         </div>
       ) : (
         <>
