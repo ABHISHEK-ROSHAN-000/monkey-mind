@@ -12,6 +12,17 @@ export function cloudinaryUrl(publicId, { w = 1200 } = {}) {
   return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w}/${publicId}`;
 }
 
+// Optimized delivery URL for a stored media item { url, publicId, type }.
+// Cloudinary-hosted photos get auto-format + sized variants; GIFs keep their
+// original file (format conversion can kill animation); manual/legacy URLs
+// without a publicId pass through untouched.
+export function deliveryUrl(m, { w = 1200 } = {}) {
+  if (!m?.url) return null;
+  if (m.type === 'gif' || !m.publicId || !CLOUD) return m.url;
+  if (m.type === 'video') return `https://res.cloudinary.com/${CLOUD}/video/upload/q_auto,w_${w},f_auto/${m.publicId}`;
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w}/${m.publicId}`;
+}
+
 export async function uploadToCloudinary(file, folder = 'monkey-mind') {
   if (!isCloudinaryConfigured) {
     throw new Error('Cloudinary is not configured. Add VITE_CLOUDINARY_* to .env (see .env.example).');

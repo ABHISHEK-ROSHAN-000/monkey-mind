@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
+import { deliveryUrl } from '../lib/cloudinary.js';
 
 // Framer "Other" template — Info hero 5-state mosaic (desktop spec adapted to
 // fluid grid + mobile 3×4 with the same visibility map).
@@ -24,14 +25,20 @@ export default function InfoHero() {
   const COUNT = 12;
 
   const cells = useMemo(() => {
-    const urls = [];
+    const seen = new Set();
+    const out = [];
+    const push = (m) => {
+      if (!m?.url || seen.has(m.url)) return;
+      seen.add(m.url);
+      out.push(m);
+    };
     for (const p of publishedProjects) {
       for (const m of p.media || []) {
-        if (m.type !== 'video' && m.url && !urls.includes(m.url)) urls.push(m.url);
+        if (m.type !== 'video') push(m);
       }
-      if (p.cover && !urls.includes(p.cover)) urls.push(p.cover);
+      if (p.cover) push({ url: p.cover });
     }
-    return urls.slice(0, COUNT);
+    return out.slice(0, COUNT);
   }, [publishedProjects, COUNT]);
 
   const [idx, setIdx] = useState(0);
@@ -65,12 +72,12 @@ export default function InfoHero() {
     <section className="info-hero" aria-label={settings.about.title}>
       <h1 className="info-title">{settings.about.title}</h1>
       <div className="info-grid">
-        {cells.map((src, i) => {
+        {cells.map((cell, i) => {
           const visible = staticAll || STATES[idx][i] === 1;
           return (
             <div className={`info-cell tile-${KIND[i].toLowerCase()}`} key={i}>
               <img
-                src={src}
+                src={deliveryUrl(cell, { w: 800 })}
                 alt=""
                 loading={i < 4 ? 'eager' : 'lazy'}
                 className={visible ? '' : 'dim'}

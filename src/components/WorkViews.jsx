@@ -1,18 +1,18 @@
 import { Link } from 'react-router-dom';
+import { deliveryUrl } from '../lib/cloudinary.js';
 
-// Tile image: dedicated thumbnail first, then first gallery photo (images
+// Tile source: dedicated thumbnail first, then first gallery photo (images
 // only — legacy video entries are skipped), then the main photo.
-function tileSrc(p) {
-  if (p.thumbnail?.url) return p.thumbnail.url;
+function tileSource(p) {
+  if (p.thumbnail?.url) return p.thumbnail;
   const m = (p.media || []).find((x) => x.type !== 'video') || p.media?.[0];
-  if (!m || m.type === 'video') return p.cover;
-  return m.url || p.cover;
+  if (!m || m.type === 'video') return p.cover ? { url: p.cover } : null;
+  return m;
 }
 
 function Thumb({ p }) {
-  // Tile image: dedicated thumbnail first, then first gallery photo, then main photo.
   // No inline sizing: CSS owns layout (absolute fill + clip-path hover).
-  const src = tileSrc(p);
+  const src = deliveryUrl(tileSource(p), { w: 800 });
   return <img src={src} alt={p.title} loading="lazy" />;
 }
 
@@ -31,12 +31,12 @@ export function WorkGrid({ items }) {
 
 function ListThumb({ p }) {
   const imgs = (p.media || []).filter((m) => m.type !== 'video');
-  const first = p.thumbnail?.url || imgs[0]?.url || p.cover;
-  const second = imgs[1]?.url;
+  const first = p.thumbnail?.url ? p.thumbnail : imgs[0];
+  const second = imgs[1];
   return (
     <span className="list-thumb">
-      <img className="t0" src={first} alt="" loading="lazy" />
-      {second ? <img className="t1" src={second} alt="" loading="lazy" /> : null}
+      <img className="t0" src={deliveryUrl(first, { w: 800 }) || p.cover} alt="" loading="lazy" />
+      {second?.url ? <img className="t1" src={deliveryUrl(second, { w: 400 })} alt="" loading="lazy" /> : null}
     </span>
   );
 }

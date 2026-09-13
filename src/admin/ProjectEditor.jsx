@@ -4,9 +4,11 @@ import { useSite } from '../lib/store.jsx';
 import { isCloudinaryConfigured, uploadToCloudinary } from '../lib/cloudinary.js';
 
 const uid = () => `m-${Math.random().toString(36).slice(2, 8)}`;
-const MAX_FILE_MB = 10;
+const IMG_MAX_MB = 10;
+const VIDEO_MAX_MB = 80;
 const MAX_ITEMS = 24;
-const OK_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const OK_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const OK_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const blank = () => ({
@@ -73,12 +75,14 @@ export default function ProjectEditor() {
     const uploaded = [];
     try {
       for (const f of arr) {
-        if (!OK_TYPES.includes(f.type)) {
-          errs.push(`${f.name || 'File'}: only JPG, PNG, WebP or GIF photos, please.`);
+        const isVideo = OK_VIDEO_TYPES.includes(f.type);
+        if (!isVideo && !OK_IMAGE_TYPES.includes(f.type)) {
+          errs.push(`${f.name || 'File'}: only JPG, PNG, WebP, GIF or MP4/WebM/MOV, please.`);
           continue;
         }
-        if (f.size > MAX_FILE_MB * 1024 * 1024) {
-          errs.push(`${f.name}: bigger than ${MAX_FILE_MB}MB — please use a smaller photo.`);
+        const capMb = isVideo ? VIDEO_MAX_MB : IMG_MAX_MB;
+        if (f.size > capMb * 1024 * 1024) {
+          errs.push(`${f.name}: bigger than ${capMb}MB — please use a smaller ${isVideo ? 'video' : 'photo'}.`);
           continue;
         }
         try {
@@ -134,12 +138,12 @@ export default function ProjectEditor() {
       setThumbError('Photo uploads aren\u2019t working right now. Contact your developer.');
       return;
     }
-    if (!OK_TYPES.includes(f.type)) {
+    if (!OK_IMAGE_TYPES.includes(f.type)) {
       setThumbError('Only JPG, PNG, WebP or GIF photos, please.');
       return;
     }
-    if (f.size > MAX_FILE_MB * 1024 * 1024) {
-      setThumbError(`Bigger than ${MAX_FILE_MB}MB — please use a smaller photo.`);
+    if (f.size > IMG_MAX_MB * 1024 * 1024) {
+      setThumbError(`Bigger than ${IMG_MAX_MB}MB — please use a smaller photo.`);
       return;
     }
     setThumbBusy(true);
@@ -225,13 +229,13 @@ export default function ProjectEditor() {
           </div>
 
           <div className="card">
-            <b>2. Photos</b>
+            <b>2. Photos + videos</b>
             <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
               {isCloudinaryConfigured
-                ? `JPG, PNG, WebP or GIF, max ${MAX_FILE_MB}MB each, max ${MAX_ITEMS} per product. Use ↑ ↓ to reorder — the first photo becomes the main photo unless you pick another.`
+                ? `Photos (JPG/PNG/WebP/GIF, max ${IMG_MAX_MB}MB) and short videos (MP4/WebM/MOV, max ${VIDEO_MAX_MB}MB), max ${MAX_ITEMS} files per product. Use ↑ ↓ to reorder — the first photo becomes the main photo unless you pick another. Videos play silently in a loop on the product page.`
                 : 'Photo uploads aren\u2019t working right now. Contact your developer.'}
             </p>
-            <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => onFiles(e.target.files)} disabled={busy || !isCloudinaryConfigured} />
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" onChange={(e) => onFiles(e.target.files)} disabled={busy || !isCloudinaryConfigured} />
             {busy && <p>Uploading…</p>}
             {uploadErrors.length > 0 && (
               <div style={{ color: '#b3261e', fontSize: '.85rem', marginTop: 8 }}>
@@ -242,7 +246,7 @@ export default function ProjectEditor() {
               {[...form.media].sort((a, b) => a.order - b.order).map((m) => (
                 <div className="m" key={m.key} style={form.cover === m.url ? { outline: '2px solid #212121' } : undefined}>
                   <img src={m.url} alt="" />
-                  <div style={{ padding: 6, fontSize: '.75rem' }}>{form.cover === m.url ? 'Main photo' : 'Photo'}
+                  <div style={{ padding: 6, fontSize: '.75rem' }}>{form.cover === m.url ? 'Main photo' : (m.type === 'video' ? 'Video' : 'Photo')}
                     <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" style={{ marginTop: 4 }} maxLength={140} />
                     <div className="row" style={{ marginTop: 4 }}>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, -1)}>↑</button>

@@ -54,7 +54,7 @@ function cleanMedia(media) {
   if (!Array.isArray(media)) return [];
   return media.map((m, i) => ({
     key: String(m.key || mkey()),
-    type: m.type === 'gif' ? 'gif' : 'image',
+    type: m.type === 'video' ? 'video' : (m.type === 'gif' ? 'gif' : 'image'),
     url: String(m.url || ''),
     publicId: m.publicId || null,
     caption: String(m.caption || ''),
