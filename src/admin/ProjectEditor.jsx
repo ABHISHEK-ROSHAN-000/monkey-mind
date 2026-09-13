@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSite } from '../lib/store.jsx';
 import { isCloudinaryConfigured, uploadToCloudinary } from '../lib/cloudinary.js';
@@ -30,6 +30,11 @@ export default function ProjectEditor() {
   const [uploadErrors, setUploadErrors] = useState([]);
   const [thumbBusy, setThumbBusy] = useState(false);
   const [thumbError, setThumbError] = useState('');
+  const [draggingKey, setDraggingKey] = useState(null);
+  const dragKey = useRef(null);
+  const rowRefs = useRef({});
+  const prevTops = useRef({});
+  const flipToken = useRef(0);
   const loadedId = useRef(id);
   const dirtyRef = useRef(false);
   const markDirty = () => {
@@ -130,6 +135,90 @@ export default function ProjectEditor() {
       return { ...f, media: a.map((m, k) => ({ ...m, order: k })) };
     });
   };
+
+  const moveMediaTo = (key, targetKey, before) => {
+    if (!key || !targetKey || key === targetKey) return;
+    markDirty();
+    setForm((f) => {
+      const dragged = f.media.find((m) => m.key === key);
+      if (!dragged) return f;
+      const a = [...f.media].sort((x, y) => x.order - y.order).filter((m) => m.key !== key);
+      let idx = a.findIndex((m) => m.key === targetKey);
+      if (idx < 0) idx = a.length;
+      else if (!before) idx += 1;
+      a.splice(idx, 0, dragged);
+      const next = a.map((m, k) => ({ ...m, order: k }));
+      // No-op guard: same reference bails out of the render (calms hover cadence).
+      const prev = [...f.media].sort((x, y) => x.order - y.order);
+      if (next.every((m, k) => m.key === prev[k]?.key)) return f;
+      return { ...f, media: next };
+    });
+  };
+
+  const onCardDragStart = (e, key) => {
+    // Never start a drag from editable controls or the video preview.
+    if (e.target.closest('input, textarea, button, video')) {
+      e.preventDefault();
+      return;
+    }
+    dragKey.current = key;
+    setDraggingKey(key);
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', key); } catch { /* ignore */ }
+  };
+
+  const onCardDragOver = (e, key) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    // Live reorder: commit on hover so siblings shift while dragging.
+    const from = dragKey.current;
+    if (!from || from === key) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const before = (e.clientY - rect.top) < rect.height / 2;
+    moveMediaTo(from, key, before);
+  };
+
+  const onCardDrop = (e) => {
+    // Order is already committed live on hover — just clear the drag state.
+    e.preventDefault();
+    endDrag();
+  };
+
+  const endDrag = () => {
+    dragKey.current = null;
+    setDraggingKey(null);
+  };
+
+  const orderSig = form.media.map((m) => m.key).join('|');
+
+  // FLIP-animated list: after every order change, slide rows from their
+  // previous Y to their new Y. The dragged row is excluded (it follows the
+  // cursor via the native ghost); a token guards stale animation frames.
+  useLayoutEffect(() => {
+    const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const next = {};
+    Object.entries(rowRefs.current).forEach(([k, el]) => {
+      if (el) next[k] = el.getBoundingClientRect().top;
+    });
+    if (!reduce) {
+      const my = (flipToken.current += 1);
+      Object.entries(next).forEach(([k, top]) => {
+        const el = rowRefs.current[k];
+        const old = prevTops.current[k];
+        if (el && k !== dragKey.current && old !== undefined && old !== top) {
+          const dy = old - top;
+          el.style.transition = 'none';
+          el.style.transform = `translateY(${dy}px)`;
+          requestAnimationFrame(() => {
+            if (my !== flipToken.current || rowRefs.current[k] !== el) return;
+            el.style.transition = 'transform .22s ease';
+            el.style.transform = '';
+          });
+        }
+      });
+    }
+    prevTops.current = next;
+  }, [orderSig]);
 
   const onThumbFile = async (files) => {
     const f = files?.[0];
@@ -233,7 +322,7 @@ export default function ProjectEditor() {
             <b>2. Photos + videos</b>
             <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
               {isCloudinaryConfigured
-                ? `Photos (JPG/PNG/WebP/GIF, max ${IMG_MAX_MB}MB) and short videos (MP4/WebM/MOV, max ${VIDEO_MAX_MB}MB), max ${MAX_ITEMS} files per product. Use ↑ ↓ to reorder — the first photo becomes the main photo unless you pick another. Videos play silently in a loop on the product page.`
+                ? `Photos (JPG/PNG/WebP/GIF, max ${IMG_MAX_MB}MB) and short videos (MP4/WebM/MOV, max ${VIDEO_MAX_MB}MB), max ${MAX_ITEMS} files per product. Drag photos to reorder (or use ↑ ↓ on touch screens) — the first photo becomes the main photo unless you pick another. Videos play silently in a loop on the product page.`
                 : 'Photo uploads aren\u2019t working right now. Contact your developer.'}
             </p>
             <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" onChange={(e) => onFiles(e.target.files)} disabled={busy || !isCloudinaryConfigured} />
@@ -243,26 +332,43 @@ export default function ProjectEditor() {
                 {uploadErrors.map((m, i) => <p key={i} style={{ margin: '4px 0' }}>{m}</p>)}
               </div>
             )}
-            <div className="media-strip" style={{ marginTop: 12 }}>
-              {[...form.media].sort((a, b) => a.order - b.order).map((m) => (
-                <div className="m" key={m.key} style={form.cover === m.url ? { outline: '2px solid #212121' } : undefined}>
-                  {m.type === 'video' ? (
-                    <video src={m.url} muted playsInline preload="metadata" />
-                  ) : (
-                    <img src={m.url} alt="" />
-                  )}
-                  <div style={{ padding: 6, fontSize: '.75rem' }}>{form.cover === m.url ? 'Main photo' : (m.type === 'video' ? 'Video' : 'Photo')}
-                    <div style={{ color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={m.name || m.caption || 'Untitled file'}>{m.name || m.caption || 'Untitled file'}</div>
-                    <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" style={{ marginTop: 4 }} maxLength={140} />
-                    <div className="row" style={{ marginTop: 4 }}>
-                      <button className="btn ghost" onClick={() => moveMedia(m.key, -1)}>↑</button>
-                      <button className="btn ghost" onClick={() => moveMedia(m.key, 1)}>↓</button>
-                      <button className="btn danger" onClick={() => delMedia(m.key)}>✕</button>
-                    </div>
-                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => set('cover', m.url)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The main photo must be a still image' : undefined}>Use as main photo</button>
-                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => setPhotoAsThumb(m)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The thumbnail must be a still image' : undefined}>Use as thumbnail</button>
-                    {m.type === 'video' && <div style={{ color: 'var(--muted)', marginTop: 4 }}>Videos can\u2019t be the main photo or thumbnail — tiles always show stills.</div>}
-                  </div>
+            <div className="media-list" style={{ marginTop: 12 }}>
+              {[...form.media].sort((a, b) => a.order - b.order).map((m, i) => (
+                <div
+                  className={`mrow${draggingKey === m.key ? ' dragging' : ''}${form.cover === m.url ? ' is-cover' : ''}`}
+                  key={m.key}
+                  ref={(el) => { if (el) rowRefs.current[m.key] = el; else delete rowRefs.current[m.key]; }}
+                  draggable
+                  onDragStart={(e) => onCardDragStart(e, m.key)}
+                  onDragOver={(e) => onCardDragOver(e, m.key)}
+                  onDrop={onCardDrop}
+                  onDragEnd={endDrag}
+                >
+                  <span className="grip" title="Drag to reorder">⋮⋮</span>
+                  <span className="mthumb">
+                    {m.type === 'video' ? (
+                      <video src={m.url} muted playsInline preload="metadata" />
+                    ) : (
+                      <img src={m.url} alt="" />
+                    )}
+                  </span>
+                  <span className="mmain">
+                    <span className="mtitle">{i + 1}. {form.cover === m.url ? 'Main photo' : (m.type === 'video' ? 'Video' : 'Photo')}</span>
+                    <span className="mname" title={m.name || m.caption || 'Untitled file'}>{m.name || m.caption || 'Untitled file'}</span>
+                    <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" maxLength={140} />
+                    {m.type === 'video' && <span className="mnote">Videos can\u2019t be the main photo or thumbnail — tiles always show stills.</span>}
+                  </span>
+                  <span className="mactions">
+                    <span className="row">
+                      <button className="btn ghost" onClick={() => moveMedia(m.key, -1)} aria-label="Move up">↑</button>
+                      <button className="btn ghost" onClick={() => moveMedia(m.key, 1)} aria-label="Move down">↓</button>
+                      <button className="btn danger" onClick={() => delMedia(m.key)} aria-label="Remove">✕</button>
+                    </span>
+                    <span className="row" style={{ marginTop: 4 }}>
+                      <button className="btn ghost" onClick={() => set('cover', m.url)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The main photo must be a still image' : undefined}>Main photo</button>
+                      <button className="btn ghost" onClick={() => setPhotoAsThumb(m)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The thumbnail must be a still image' : undefined}>Thumbnail</button>
+                    </span>
+                  </span>
                 </div>
               ))}
             </div>
