@@ -87,14 +87,15 @@ export default function ProjectEditor() {
         }
         try {
           const u = await uploadToCloudinary(f);
-          uploaded.push({ key: uid(), type: u.type, url: u.url, publicId: u.publicId, caption: '', order: form.media.length + uploaded.length });
+          uploaded.push({ key: uid(), type: u.type, url: u.url, publicId: u.publicId, name: u.originalFilename || f.name || '', caption: '', order: form.media.length + uploaded.length });
         } catch (e) {
           errs.push(`${f.name}: ${e?.message || 'upload failed.'}`);
         }
       }
       if (uploaded.length) {
         markDirty();
-        setForm((f) => ({ ...f, media: [...f.media, ...uploaded], cover: f.cover || uploaded[0].url }));
+        const firstImage = uploaded.find((u) => u.type !== 'video');
+        setForm((f) => ({ ...f, media: [...f.media, ...uploaded], cover: f.cover || firstImage?.url || '' }));
       }
     } finally {
       setBusy(false);
@@ -245,16 +246,22 @@ export default function ProjectEditor() {
             <div className="media-strip" style={{ marginTop: 12 }}>
               {[...form.media].sort((a, b) => a.order - b.order).map((m) => (
                 <div className="m" key={m.key} style={form.cover === m.url ? { outline: '2px solid #212121' } : undefined}>
-                  <img src={m.url} alt="" />
+                  {m.type === 'video' ? (
+                    <video src={m.url} muted playsInline preload="metadata" />
+                  ) : (
+                    <img src={m.url} alt="" />
+                  )}
                   <div style={{ padding: 6, fontSize: '.75rem' }}>{form.cover === m.url ? 'Main photo' : (m.type === 'video' ? 'Video' : 'Photo')}
+                    <div style={{ color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={m.name || m.caption || 'Untitled file'}>{m.name || m.caption || 'Untitled file'}</div>
                     <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" style={{ marginTop: 4 }} maxLength={140} />
                     <div className="row" style={{ marginTop: 4 }}>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, -1)}>↑</button>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, 1)}>↓</button>
                       <button className="btn danger" onClick={() => delMedia(m.key)}>✕</button>
                     </div>
-                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => set('cover', m.url)}>Use as main photo</button>
-                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => setPhotoAsThumb(m)}>Use as thumbnail</button>
+                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => set('cover', m.url)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The main photo must be a still image' : undefined}>Use as main photo</button>
+                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => setPhotoAsThumb(m)} disabled={m.type === 'video'} title={m.type === 'video' ? 'The thumbnail must be a still image' : undefined}>Use as thumbnail</button>
+                    {m.type === 'video' && <div style={{ color: 'var(--muted)', marginTop: 4 }}>Videos can\u2019t be the main photo or thumbnail — tiles always show stills.</div>}
                   </div>
                 </div>
               ))}

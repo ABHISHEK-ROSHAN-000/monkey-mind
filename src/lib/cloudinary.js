@@ -47,7 +47,10 @@ export async function uploadToCloudinary(file, folder = 'monkey-mind') {
   const j = await res.json();
   if (!j?.secure_url) throw new Error('Cloudinary upload failed: empty response. Retry.');
   const kind = j.resource_type === 'video' ? 'video' : (file.type === 'image/gif' ? 'gif' : 'image');
-  return { url: j.secure_url, publicId: j.public_id, type: kind };
+  // Cloudinary echoes the source name back (extension excluded), e.g.
+  // original_filename "sample" + format "jpg" → display "sample.jpg".
+  const originalFilename = j.original_filename ? (j.format ? `${j.original_filename}.${j.format}` : j.original_filename) : null;
+  return { url: j.secure_url, publicId: j.public_id, type: kind, originalFilename };
 }
 
 // Note: unsigned presets cannot delete client-side, so CMS deletes are

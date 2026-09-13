@@ -57,6 +57,7 @@ function cleanMedia(media) {
     type: m.type === 'video' ? 'video' : (m.type === 'gif' ? 'gif' : 'image'),
     url: String(m.url || ''),
     publicId: m.publicId || null,
+    name: String(m.name || ''),
     caption: String(m.caption || ''),
     order: Number.isFinite(Number(m.order)) ? Number(m.order) : i,
   })).filter((m) => m.url && !m.url.startsWith('blob:'));
