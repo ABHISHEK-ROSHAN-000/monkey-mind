@@ -271,7 +271,8 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 @media (max-width: 768px) {
   .wrap { padding: 0 20px; }
   .topnav.main-nav, .topmail.main-nav { display: none; }
-  .info-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); }
+  .info-hero { height: 75vh; height: 75svh; }
+  .info-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
   .site-header .topbar { grid-template-columns: 1fr auto; }
   .menu-btn { display: inline-block; }
   .hero { grid-template-columns: 1fr; padding: 56px 0 32px; }

@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 import { deliveryUrl } from '../lib/cloudinary.js';
 
-// Framer "Other" template — Info hero 5-state mosaic (desktop spec adapted to
-// fluid grid + mobile 3×4 with the same visibility map).
+// Framer "Other" template — Info hero 5-state mosaic (desktop 4×3, mobile 3×3)
+// over a giant centered title. Fixed image order per mount; visibility follows
+// the exact 5-state map above — layout never rearranges, tiles just fade.
 // Positions 1–12 map to indexes 0–11; 1 = visible, 0 = hidden.
 const STATES = [
   [0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1], // Slider 01: 02,03,05,07,08,10,12
@@ -17,12 +18,19 @@ const KIND = ['F', 'S', 'F', 'S', 'S', 'F', 'S', 'F', 'F', 'F', 'F', 'S'];
 
 const STATE_MS = 2500; // each preset holds 2.5s, loops 1→2→3→4→5→1
 
-// Info hero: full-bleed photo grid (4×3 desktop, 3×4 mobile) over a giant
-// centered title. Fixed image order per mount; visibility follows the exact
-// 5-state map above — layout never rearranges, tiles just fade.
 export default function InfoHero() {
   const { publishedProjects, settings } = useSite();
-  const COUNT = 12;
+  const [COUNT, setCOUNT] = useState(12);
+  const [idx, setIdx] = useState(0);
+  const [staticAll, setStaticAll] = useState(false);
+
+  useEffect(() => {
+    const m = window.matchMedia('(max-width: 768px)');
+    setCOUNT(m.matches ? 9 : 12);
+    const onChange = (e) => setCOUNT(e.matches ? 9 : 12);
+    m.addEventListener('change', onChange);
+    return () => m.removeEventListener('change', onChange);
+  }, []);
 
   const cells = useMemo(() => {
     const seen = new Set();
@@ -40,9 +48,6 @@ export default function InfoHero() {
     }
     return out.slice(0, COUNT);
   }, [publishedProjects, COUNT]);
-
-  const [idx, setIdx] = useState(0);
-  const [staticAll, setStaticAll] = useState(false);
 
   useEffect(() => {
     setIdx(0);
