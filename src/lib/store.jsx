@@ -44,6 +44,12 @@ function nextOrder(items) {
   return items.reduce((m, x) => Math.max(m, Number(x.order) || 0), 0) + 1;
 }
 
+function cleanThumbnail(t) {
+  const url = String(t?.url || '');
+  if (!url || url.startsWith('blob:')) return { url: '', publicId: null };
+  return { url, publicId: t.publicId || null };
+}
+
 function cleanMedia(media) {
   if (!Array.isArray(media)) return [];
   return media.map((m, i) => ({
@@ -135,9 +141,10 @@ export function SiteProvider({ children }) {
     const publishedProjects = projects
       .filter((p) => p.status === 'published')
       .sort(byOrder);
+    // Home order follows the Products list order (single "Show on home page" tick).
     const featuredProjects = publishedProjects
       .filter((p) => p.featured)
-      .sort((a, b) => (a.featuredOrder || 99) - (b.featuredOrder || 99));
+      .sort(byOrder);
     const getProject = (slug) => projects.find((p) => p.slug === slug);
 
     const needDb = () => {
@@ -151,6 +158,7 @@ export function SiteProvider({ children }) {
         title: (input.title || '').trim(),
         slug: ((input.slug || '').trim() || slugify(input.title || '')),
         cover: String(input.cover || ''),
+        thumbnail: cleanThumbnail(input.thumbnail),
         media: cleanMedia(input.media),
         categoryIds: (Array.isArray(input.categoryIds) ? input.categoryIds : []).filter((c) => typeof c === 'string'),
         excerpt: String(input.excerpt || ''),

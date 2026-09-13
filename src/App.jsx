@@ -15,7 +15,6 @@ const Dashboard = lazy(() => import('./admin/Dashboard.jsx'));
 const ProjectsAdmin = lazy(() => import('./admin/ProjectsAdmin.jsx'));
 const ProjectEditor = lazy(() => import('./admin/ProjectEditor.jsx'));
 const CategoriesAdmin = lazy(() => import('./admin/CategoriesAdmin.jsx'));
-const FeaturedAdmin = lazy(() => import('./admin/FeaturedAdmin.jsx'));
 const AboutAdmin = lazy(() => import('./admin/AboutAdmin.jsx'));
 
 function PublicShell({ children }) {
@@ -60,7 +59,6 @@ export default function App() {
               <Route path="/admin/projects" element={<AdminSuspense><ProjectsAdmin /></AdminSuspense>} />
               <Route path="/admin/projects/:id" element={<AdminSuspense><ProjectEditor /></AdminSuspense>} />
               <Route path="/admin/categories" element={<AdminSuspense><CategoriesAdmin /></AdminSuspense>} />
-              <Route path="/admin/featured" element={<AdminSuspense><FeaturedAdmin /></AdminSuspense>} />
               <Route path="/admin/about" element={<AdminSuspense><AboutAdmin /></AdminSuspense>} />
             </Route>
           </Route>

@@ -1,10 +1,18 @@
 import { Link } from 'react-router-dom';
 
-function Thumb({ p }) {
-  // Images only — skip any legacy video entries, fall back to cover.
-  // No inline sizing: CSS owns layout (absolute fill + clip-path hover).
+// Tile image: dedicated thumbnail first, then first gallery photo (images
+// only — legacy video entries are skipped), then the main photo.
+function tileSrc(p) {
+  if (p.thumbnail?.url) return p.thumbnail.url;
   const m = (p.media || []).find((x) => x.type !== 'video') || p.media?.[0];
-  const src = m?.type === 'video' ? p.cover : m?.url || p.cover;
+  if (!m || m.type === 'video') return p.cover;
+  return m.url || p.cover;
+}
+
+function Thumb({ p }) {
+  // Tile image: dedicated thumbnail first, then first gallery photo, then main photo.
+  // No inline sizing: CSS owns layout (absolute fill + clip-path hover).
+  const src = tileSrc(p);
   return <img src={src} alt={p.title} loading="lazy" />;
 }
 
@@ -23,7 +31,7 @@ export function WorkGrid({ items }) {
 
 function ListThumb({ p }) {
   const imgs = (p.media || []).filter((m) => m.type !== 'video');
-  const first = imgs[0]?.url || p.cover;
+  const first = p.thumbnail?.url || imgs[0]?.url || p.cover;
   const second = imgs[1]?.url;
   return (
     <span className="list-thumb">

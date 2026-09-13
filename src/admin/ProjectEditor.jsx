@@ -11,7 +11,7 @@ const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const blank = () => ({
   title: '', slug: '', categoryIds: [], excerpt: '', body: '', year: String(new Date().getFullYear()),
-  tags: [], cover: '', featured: false, status: 'published', media: [],
+  tags: [], cover: '', thumbnail: null, featured: false, status: 'published', media: [],
 });
 
 export default function ProjectEditor() {
@@ -26,9 +26,15 @@ export default function ProjectEditor() {
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadErrors, setUploadErrors] = useState([]);
+  const [thumbBusy, setThumbBusy] = useState(false);
+  const [thumbError, setThumbError] = useState('');
   const loadedId = useRef(id);
+  const dirtyRef = useRef(false);
+  const markDirty = () => {
+    dirtyRef.current = true;
+  };
 
-  // Reload the form when navigating between project ids (same component instance).
+  // Reload the form when navigating between product ids (same component instance).
   useEffect(() => {
     if (loadedId.current === id) return;
     loadedId.current = id;
@@ -36,23 +42,30 @@ export default function ProjectEditor() {
     setForm(next);
     setTagsStr((next.tags || []).join(', '));
     setUploadErrors([]);
+    dirtyRef.current = false;
   }, [id, isNew, s.projects]);
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const toggleCat = (cid) => setForm((f) => ({
-    ...f, categoryIds: f.categoryIds.includes(cid) ? f.categoryIds.filter((c) => c !== cid) : [...f.categoryIds, cid],
-  }));
+  const set = (k, v) => {
+    markDirty();
+    setForm((f) => ({ ...f, [k]: v }));
+  };
+  const toggleCat = (cid) => {
+    markDirty();
+    setForm((f) => ({
+      ...f, categoryIds: f.categoryIds.includes(cid) ? f.categoryIds.filter((c) => c !== cid) : [...f.categoryIds, cid],
+    }));
+  };
 
   const onFiles = async (files) => {
     setUploadErrors([]);
     if (!isCloudinaryConfigured) {
-      setUploadErrors(['Cloudinary is not configured. Add VITE_CLOUDINARY_* to .env — uploads are blocked until then.']);
+      setUploadErrors(['Photo uploads aren\u2019t working right now. Contact your developer.']);
       return;
     }
     const arr = [...(files || [])];
     if (!arr.length) return;
     if (form.media.length + arr.length > MAX_ITEMS) {
-      setUploadErrors([`Too many images: max ${MAX_ITEMS} per project.`]);
+      setUploadErrors([`Too many photos: max ${MAX_ITEMS} per product.`]);
       return;
     }
     setBusy(true);
@@ -61,11 +74,11 @@ export default function ProjectEditor() {
     try {
       for (const f of arr) {
         if (!OK_TYPES.includes(f.type)) {
-          errs.push(`${f.name || 'File'}: only JPG, PNG, WebP or GIF.`);
+          errs.push(`${f.name || 'File'}: only JPG, PNG, WebP or GIF photos, please.`);
           continue;
         }
         if (f.size > MAX_FILE_MB * 1024 * 1024) {
-          errs.push(`${f.name}: over ${MAX_FILE_MB}MB.`);
+          errs.push(`${f.name}: bigger than ${MAX_FILE_MB}MB — please use a smaller photo.`);
           continue;
         }
         try {
@@ -76,6 +89,7 @@ export default function ProjectEditor() {
         }
       }
       if (uploaded.length) {
+        markDirty();
         setForm((f) => ({ ...f, media: [...f.media, ...uploaded], cover: f.cover || uploaded[0].url }));
       }
     } finally {
@@ -85,18 +99,23 @@ export default function ProjectEditor() {
   };
 
   const delMedia = (key) => {
+    const gone = form.media.find((m) => m.key === key);
+    if (!gone) return;
+    if (!confirm('Remove this photo from the product?')) return;
+    markDirty();
     setForm((f) => {
-      const gone = f.media.find((m) => m.key === key);
       const media = f.media.filter((m) => m.key !== key);
-      return { ...f, media, cover: gone && f.cover === gone.url ? '' : f.cover };
+      return { ...f, media, cover: f.cover === gone.url ? '' : f.cover };
     });
   };
 
   const setCaption = (key, caption) => {
+    markDirty();
     setForm((f) => ({ ...f, media: f.media.map((m) => (m.key === key ? { ...m, caption } : m)) }));
   };
 
   const moveMedia = (key, dir) => {
+    markDirty();
     setForm((f) => {
       const a = [...f.media].sort((x, y) => x.order - y.order);
       const i = a.findIndex((m) => m.key === key);
@@ -107,17 +126,71 @@ export default function ProjectEditor() {
     });
   };
 
+  const onThumbFile = async (files) => {
+    const f = files?.[0];
+    if (!f) return;
+    setThumbError('');
+    if (!isCloudinaryConfigured) {
+      setThumbError('Photo uploads aren\u2019t working right now. Contact your developer.');
+      return;
+    }
+    if (!OK_TYPES.includes(f.type)) {
+      setThumbError('Only JPG, PNG, WebP or GIF photos, please.');
+      return;
+    }
+    if (f.size > MAX_FILE_MB * 1024 * 1024) {
+      setThumbError(`Bigger than ${MAX_FILE_MB}MB — please use a smaller photo.`);
+      return;
+    }
+    setThumbBusy(true);
+    try {
+      const u = await uploadToCloudinary(f);
+      markDirty();
+      setForm((prev) => ({ ...prev, thumbnail: { url: u.url, publicId: u.publicId } }));
+    } catch (e) {
+      setThumbError(e?.message || 'Upload failed.');
+    } finally {
+      setThumbBusy(false);
+    }
+  };
+
+  const setPhotoAsThumb = (m) => {
+    markDirty();
+    setThumbError('');
+    setForm((f) => ({ ...f, thumbnail: { url: m.url, publicId: m.publicId || null } }));
+  };
+
+  const copyCoverAsThumb = () => {
+    if (!form.cover) return;
+    markDirty();
+    setThumbError('');
+    setForm((f) => ({ ...f, thumbnail: { url: f.cover, publicId: null } }));
+  };
+
+  const removeThumb = () => {
+    if (!confirm('Remove the thumbnail? The main photo will be used instead.')) return;
+    markDirty();
+    setForm((f) => ({ ...f, thumbnail: null }));
+  };
+
+  const cancel = () => {
+    if (dirtyRef.current && !confirm('Leave without saving? Your changes will be lost.')) return;
+    nav('/admin/projects');
+  };
+
   const save = async () => {
     const slug = (form.slug.trim() || form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
-    if (!form.title.trim()) { alert('Title is required.'); return; }
-    if (slug && !SLUG_RE.test(slug)) { alert('Slug must be lowercase letters, numbers and dashes (e.g. genesis-press).'); return; }
+    if (!form.title.trim()) { alert('Please give the product a name first.'); return; }
+    if (slug && !SLUG_RE.test(slug)) { alert('The page link can only use small letters, numbers and dashes (e.g. genesis-press).'); return; }
     const cover = form.cover || form.media[0]?.url || '';
-    if (!cover) { alert('Add a cover image or upload at least one media item.'); return; }
+    if (!cover) { alert('Please upload at least one photo.'); return; }
     const bad = form.media.find((m) => !m.url || m.url.startsWith('blob:'));
-    if (bad) { alert('One media item is an unsaved local preview. Re-upload it, then save.'); return; }
+    if (bad) { alert('One photo didn\u2019t upload properly. Please upload it again, then save.'); return; }
+    if (form.thumbnail?.url?.startsWith('blob:')) { alert('The thumbnail didn\u2019t upload properly. Please upload it again, then save.'); return; }
     setSaving(true);
     try {
-      await s.upsertProject({ ...form, cover, tags: tagsStr.split(',').map((t) => t.trim()).filter(Boolean) });
+      await s.upsertProject({ ...form, excerpt: '', cover, tags: tagsStr.split(',').map((t) => t.trim()).filter(Boolean) });
+      dirtyRef.current = false;
       nav('/admin/projects');
     } catch (e) {
       alert(e?.message || 'Save failed.');
@@ -131,47 +204,32 @@ export default function ProjectEditor() {
 
   return (
     <>
-      <h1 style={{ marginTop: 0 }}>{isNew ? 'New project' : `Edit — ${existing?.title || ''}`}</h1>
+      <h1 style={{ marginTop: 0 }}>{isNew ? 'New product' : `Edit — ${existing?.title || ''}`}</h1>
       {!isNew && !existing && <p>Not found. It may have been deleted.</p>}
       {(isNew || existing) && (
         <>
           <div className="card">
-            <label>Title</label>
+            <b>1. Product details</b>
+            <label>Product name</label>
             <input value={form.title} onChange={(e) => set('title', e.target.value)} maxLength={200} />
-            <label>Slug (auto from title if empty — becomes the page URL)</label>
-            <input value={form.slug} onChange={(e) => set('slug', e.target.value)} placeholder="genesis" maxLength={200} />
+            <label>Page link</label>
+            <input value={form.slug} onChange={(e) => set('slug', e.target.value)} placeholder="created from the name if left empty" maxLength={200} />
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Usually leave this alone — it's the last part of the product's web address. Small letters, numbers and dashes only.</p>
             <div className="row">
-              <div style={{ flex: 1 }}><label>Year</label><input value={form.year} onChange={(e) => set('year', e.target.value)} maxLength={12} /></div>
-              <div style={{ flex: 1 }}><label>Status</label>
-                <select value={form.status} onChange={(e) => set('status', e.target.value)}>
-                  <option value="published">published — visible to everyone</option>
-                  <option value="draft">draft — hidden from the site</option>
-                </select>
-              </div>
-              <div style={{ flex: 1 }}><label>Tags (comma separated)</label><input value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} placeholder="Branding, Digital" /></div>
+              <div style={{ flex: 1 }}><label>Year</label><input value={form.year} onChange={(e) => set('year', e.target.value)} placeholder="e.g. 2025" maxLength={12} /></div>
+              <div style={{ flex: 2 }}><label>Labels (comma separated)</label><input value={tagsStr} onChange={(e) => { markDirty(); setTagsStr(e.target.value); }} placeholder="Branding, Digital" /></div>
             </div>
-            <label>Excerpt</label>
-            <input value={form.excerpt} onChange={(e) => set('excerpt', e.target.value)} />
-            <label>Body</label>
-            <textarea rows={5} value={form.body} onChange={(e) => set('body', e.target.value)} />
-            <label>Categories</label>
-            <div className="row">
-              {s.categories.length === 0 && <span style={{ color: 'var(--muted)', fontSize: '.85rem' }}>No categories yet — add them in Categories first.</span>}
-              {s.categories.map((c) => (
-                <label key={c.id} style={{ display: 'flex', gap: 6, alignItems: 'center', border: '1px solid var(--line-dark)', borderRadius: 200, padding: '6px 12px', margin: 0 }}>
-                  <input type="checkbox" style={{ width: 'auto' }} checked={form.categoryIds.includes(c.id)} onChange={() => toggleCat(c.id)} /> {c.name}
-                </label>
-              ))}
-            </div>
-            <label style={{ marginTop: 16 }}><input type="checkbox" style={{ width: 'auto' }} checked={!!form.featured} onChange={(e) => set('featured', e.target.checked)} /> Featured on home (final order is set in Home Featured)</label>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Labels are shown under the product name on the website.</p>
+            <label>Full description</label>
+            <textarea rows={5} value={form.body} onChange={(e) => set('body', e.target.value)} placeholder="Shown on the product page. Plain text." />
           </div>
 
           <div className="card">
-            <b>Media (images + GIFs) — reorder with ↑ ↓</b>
+            <b>2. Photos</b>
             <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
               {isCloudinaryConfigured
-                ? `Uploads go to Cloudinary (JPG/PNG/WebP/GIF, max ${MAX_FILE_MB}MB each, max ${MAX_ITEMS} per project).`
-                : 'Cloudinary is not configured — uploads are blocked. Add VITE_CLOUDINARY_* to .env.'}
+                ? `JPG, PNG, WebP or GIF, max ${MAX_FILE_MB}MB each, max ${MAX_ITEMS} per product. Use ↑ ↓ to reorder — the first photo becomes the main photo unless you pick another.`
+                : 'Photo uploads aren\u2019t working right now. Contact your developer.'}
             </p>
             <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => onFiles(e.target.files)} disabled={busy || !isCloudinaryConfigured} />
             {busy && <p>Uploading…</p>}
@@ -184,26 +242,68 @@ export default function ProjectEditor() {
               {[...form.media].sort((a, b) => a.order - b.order).map((m) => (
                 <div className="m" key={m.key} style={form.cover === m.url ? { outline: '2px solid #212121' } : undefined}>
                   <img src={m.url} alt="" />
-                  <div style={{ padding: 6, fontSize: '.75rem' }}>{m.type}{form.cover === m.url ? ' · cover' : ''}
-                    <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Caption (optional)" style={{ marginTop: 4 }} maxLength={140} />
+                  <div style={{ padding: 6, fontSize: '.75rem' }}>{form.cover === m.url ? 'Main photo' : 'Photo'}
+                    <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" style={{ marginTop: 4 }} maxLength={140} />
                     <div className="row" style={{ marginTop: 4 }}>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, -1)}>↑</button>
                       <button className="btn ghost" onClick={() => moveMedia(m.key, 1)}>↓</button>
                       <button className="btn danger" onClick={() => delMedia(m.key)}>✕</button>
                     </div>
-                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => set('cover', m.url)}>Set cover</button>
+                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => set('cover', m.url)}>Use as main photo</button>
+                    <button className="btn ghost" style={{ marginTop: 4 }} onClick={() => setPhotoAsThumb(m)}>Use as thumbnail</button>
                   </div>
                 </div>
               ))}
             </div>
-            <label>Cover URL</label>
-            <input value={form.cover} onChange={(e) => set('cover', e.target.value)} placeholder="Set from an upload, or paste a URL" />
+          </div>
+
+          <div className="card">
+            <b>3. Thumbnail</b>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>The small image shown for this product on the home page, Products page and bottom strip. If empty, the main photo is used.</p>
+            {form.thumbnail?.url ? (
+              <div className="row" style={{ alignItems: 'center' }}>
+                <img src={form.thumbnail.url} alt="" style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} />
+                <button className="btn danger" onClick={removeThumb}>Remove thumbnail</button>
+              </div>
+            ) : (
+              <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>No separate thumbnail — the main photo is used.</p>
+            )}
+            <label>Upload a thumbnail photo</label>
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { onThumbFile(e.target.files); e.target.value = ''; }} disabled={thumbBusy || busy || saving || !isCloudinaryConfigured} />
+            {thumbBusy && <p>Uploading…</p>}
+            {thumbError && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{thumbError}</p>}
+            <div className="row" style={{ marginTop: 8 }}>
+              <button className="btn ghost" onClick={copyCoverAsThumb} disabled={!form.cover}>Use main photo</button>
+            </div>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Tip: every photo above also has its own “Use as thumbnail” button.</p>
+          </div>
+
+          <div className="card">
+            <b>4. Who can see this</b>
+            <label>Visibility</label>
+            <select value={form.status} onChange={(e) => set('status', e.target.value)}>
+              <option value="published">Visible to everyone</option>
+              <option value="draft">Hidden (only you can see it here)</option>
+            </select>
+            <label>Groups</label>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 0 }}>Tick every group this product belongs to — it will appear under each of them on the Products page.</p>
+            <div className="row">
+              {s.categories.length === 0 && <span style={{ color: 'var(--muted)', fontSize: '.85rem' }}>No groups yet — add one first in Groups.</span>}
+              {s.categories.map((c) => (
+                <label key={c.id} style={{ display: 'flex', gap: 6, alignItems: 'center', border: '1px solid var(--line-dark)', borderRadius: 200, padding: '6px 12px', margin: 0 }}>
+                  <input type="checkbox" style={{ width: 'auto' }} checked={form.categoryIds.includes(c.id)} onChange={() => toggleCat(c.id)} /> {c.name}
+                </label>
+              ))}
+            </div>
+            <label style={{ marginTop: 16 }}><input type="checkbox" style={{ width: 'auto' }} checked={!!form.featured} onChange={(e) => set('featured', e.target.checked)} /> Show on the home page</label>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>The order on the home page follows the Products list order.</p>
           </div>
 
           <div className="row">
-            <button className="btn" onClick={save} disabled={busy || saving}>{saving ? 'Saving…' : 'Save project'}</button>
-            <button className="btn ghost" onClick={() => nav('/admin/projects')} disabled={saving}>Cancel</button>
+            <button className="btn" onClick={save} disabled={busy || saving}>{saving ? 'Saving…' : 'Save product'}</button>
+            <button className="btn ghost" onClick={cancel} disabled={saving}>Cancel</button>
           </div>
+          {form.status === 'published' && <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>Saving puts it on the website immediately.</p>}
         </>
       )}
     </>

@@ -14,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     setErr('');
     if (!isFirebaseConfigured || !auth) {
-      setErr('CMS backend is not configured yet. Add Firebase values to .env (see .env.example).');
+      setErr('Sign-in isn\u2019t working right now. Contact your developer.');
       return;
     }
     setBusy(true);
@@ -31,9 +31,9 @@ export default function Login() {
   return (
     <div className="wrap" style={{ maxWidth: 440, padding: '80px 24px' }}>
       <Link to="/">← Back to site</Link>
-      <h1 style={{ fontFamily: 'var(--font-head)' }}>Admin login</h1>
+      <h1 style={{ fontFamily: 'var(--font-head)' }}>Manage your website</h1>
       <p style={{ color: 'var(--muted)', fontSize: '.9rem' }}>
-        {isFirebaseConfigured ? 'Sign in with your Firebase admin account.' : 'Demo mode is disabled — Firebase is not configured yet. See .env.example.'}
+        {isFirebaseConfigured ? 'Sign in to update your website.' : 'Sign-in isn\u2019t working right now. Contact your developer.'}
       </p>
       <form onSubmit={submit} className="card">
         <label>Email</label>
@@ -42,7 +42,7 @@ export default function Login() {
         <input type="password" required autoComplete="current-password" maxLength={128} value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••••" />
         {err && <p style={{ color: '#b3261e' }}>{err}</p>}
         <div className="row" style={{ marginTop: 14 }}>
-          <button className="btn" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Login'}</button>
+          <button className="btn" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
         </div>
       </form>
     </div>

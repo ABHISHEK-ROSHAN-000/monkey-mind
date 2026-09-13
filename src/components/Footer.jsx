@@ -4,7 +4,7 @@ import { useSite } from '../lib/store.jsx';
 
 export function Inquiry() {
   const { settings, publishedProjects } = useSite();
-  const covers = publishedProjects.map((p) => p.media?.[0]?.url || p.cover).filter(Boolean);
+  const covers = publishedProjects.map((p) => p.thumbnail?.url || p.media?.[0]?.url || p.cover).filter(Boolean);
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {

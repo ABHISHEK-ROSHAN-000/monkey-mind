@@ -12,12 +12,11 @@ export default function AdminLayout() {
   return (
     <div className="admin-shell">
       <aside className="admin-side">
-        <Link to="/" style={{ fontWeight: 700, padding: '10px 12px' }}>← MM Studio</Link>
+        <Link to="/" style={{ fontWeight: 700, padding: '10px 12px' }}>← View website</Link>
         <NavLink to="/admin" end className={link}>Dashboard</NavLink>
-        <NavLink to="/admin/projects" className={link}>Projects</NavLink>
-        <NavLink to="/admin/categories" className={link}>Categories</NavLink>
-        <NavLink to="/admin/featured" className={link}>Home Featured</NavLink>
-        <NavLink to="/admin/about" className={link}>About / Info</NavLink>
+        <NavLink to="/admin/projects" className={link}>Products</NavLink>
+        <NavLink to="/admin/categories" className={link}>Groups</NavLink>
+        <NavLink to="/admin/about" className={link}>Website texts</NavLink>
         <button className="btn ghost" style={{ marginTop: 'auto' }} onClick={logout}>Logout</button>
       </aside>
       <main className="admin-main"><Outlet /></main>

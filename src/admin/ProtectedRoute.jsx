@@ -20,7 +20,7 @@ export default function ProtectedRoute() {
     });
   }, []);
 
-  if (checking) return <main className="wrap"><p>Checking session…</p></main>;
+  if (checking) return <main className="wrap"><p>Signing you in…</p></main>;
   if (!user) return <Navigate to="/admin/login" replace />;
   return <Outlet />;
 }
