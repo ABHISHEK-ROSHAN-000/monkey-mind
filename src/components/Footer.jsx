@@ -8,7 +8,7 @@ export function Inquiry() {
   const covers = publishedProjects
     .map((p) => {
       const m = p.thumbnail?.url ? p.thumbnail : (p.media || []).find((x) => x.type !== 'video') || p.media?.[0];
-      if (m && m.type !== 'video') return deliveryUrl(m, { w: 800 });
+      if (m && m.type !== 'video') return deliveryUrl(m, { w: 4000 });
       return p.cover || null;
     })
     .filter(Boolean);
