@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
+import { isCloudinaryConfigured, uploadToCloudinary } from '../lib/cloudinary.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const muted = { color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 };
+const IMG_MAX_MB = 10;
+const OK_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const INFO_CAP = 12; // mosaic map has exactly 12 position slots
+const ikey = () => `g-${Math.random().toString(36).slice(2, 8)}`;
 
 export default function AboutAdmin() {
   const s = useSite();
@@ -13,6 +18,12 @@ export default function AboutAdmin() {
   const [socials, setSocials] = useState(s.settings.socials || []);
   const [contactEmail, setEmail] = useState(s.settings.contactEmail || '');
   const [location, setLocation] = useState(s.settings.location || '');
+  const [infoGrid, setInfoGrid] = useState(s.settings.infoGrid || []);
+  const [footerImages, setFooterImages] = useState(s.settings.footerImages || []);
+  const [infoBusy, setInfoBusy] = useState(false);
+  const [infoErr, setInfoErr] = useState('');
+  const [footBusy, setFootBusy] = useState(false);
+  const [footErr, setFootErr] = useState('');
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [savedTick, setSavedTick] = useState(false);
@@ -27,6 +38,8 @@ export default function AboutAdmin() {
     setSocials(s.settings.socials || []);
     setEmail(s.settings.contactEmail || '');
     setLocation(s.settings.location || '');
+    setInfoGrid(s.settings.infoGrid || []);
+    setFooterImages(s.settings.footerImages || []);
   }, [s.settings, dirty]);
 
   const touch = (setter) => (v) => {
@@ -44,6 +57,131 @@ export default function AboutAdmin() {
 
   const askDelete = (what) => confirm(`Remove this ${what}? This goes live when you save.`);
 
+  // Every project photo/cover/thumbnail, deduped — the pick source for both cards.
+  const library = useMemo(() => {
+    const seen = new Set();
+    const out = [];
+    const push = (url, publicId, name) => {
+      if (!url || seen.has(url)) return;
+      seen.add(url);
+      out.push({ url, publicId: publicId || null, name: name || '' });
+    };
+    (s.publishedProjects || []).forEach((p) => {
+      (p.media || []).forEach((m) => {
+        if (m.type !== 'video') push(m.url, m.publicId, m.name || m.caption);
+      });
+      if (p.cover) push(p.cover, null, '');
+      if (p.thumbnail?.url) push(p.thumbnail.url, p.thumbnail.publicId, '');
+    });
+    return out;
+  }, [s.publishedProjects]);
+
+  const uploadInto = async (files, list, setList, setBusyF, setErrF, cap) => {
+    setErrF('');
+    const arr = [...(files || [])];
+    if (!arr.length) return;
+    if (!isCloudinaryConfigured) {
+      setErrF('Photo uploads aren\u2019t working right now. Contact your developer.');
+      return;
+    }
+    if (cap && list.length + arr.length > cap) {
+      setErrF(`The grid holds max ${cap} photos. Remove one to add another.`);
+      return;
+    }
+    setBusyF(true);
+    const errs = [];
+    const done = [];
+    try {
+      for (const f of arr) {
+        if (!OK_IMAGE_TYPES.includes(f.type)) {
+          errs.push(`${f.name || 'File'}: only JPG, PNG, WebP or GIF, please.`);
+          continue;
+        }
+        if (f.size > IMG_MAX_MB * 1024 * 1024) {
+          errs.push(`${f.name}: bigger than ${IMG_MAX_MB}MB — please use a smaller photo.`);
+          continue;
+        }
+        try {
+          const u = await uploadToCloudinary(f);
+          done.push({ key: ikey(), url: u.url, publicId: u.publicId, name: u.originalFilename || f.name || '' });
+        } catch (e) {
+          errs.push(`${f.name}: ${e?.message || 'upload failed.'}`);
+        }
+      }
+      if (done.length) {
+        setDirty(true);
+        setSavedTick(false);
+        setList((prev) => [...prev, ...done]);
+      }
+    } finally {
+      setBusyF(false);
+      setErrF(errs.join(' '));
+    }
+  };
+
+  const pickInto = (item, list, setList, cap) => {
+    if (cap && list.length >= cap) return;
+    if (list.some((x) => x.url === item.url)) return;
+    setDirty(true);
+    setSavedTick(false);
+    setList((prev) => [...prev, { key: ikey(), url: item.url, publicId: item.publicId || null, name: item.name || '' }]);
+  };
+
+  const moveImg = (list, setList, i, dir) => {
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    setDirty(true);
+    setSavedTick(false);
+    const a = [...list];
+    [a[i], a[j]] = [a[j], a[i]];
+    setList(a);
+  };
+
+  const delImg = (list, setList, i, what) => {
+    if (!askDelete(what)) return;
+    setDirty(true);
+    setSavedTick(false);
+    setList(list.filter((_, k) => k !== i));
+  };
+
+  const photoRows = (list, setList, numbered) => list.map((x, i) => (
+    <div key={x.key || i} className="row" style={{ borderBottom: '1px solid var(--line)', padding: '8px 0', alignItems: 'center' }}>
+      <img src={x.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8 }} loading="lazy" />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: '.85rem' }}>{numbered ? `Position ${i + 1}` : `Photo ${i + 1}`}</div>
+        <div style={{ color: 'var(--muted)', fontSize: '.8rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={x.name || x.url}>{x.name || 'Untitled file'}</div>
+      </div>
+      <button className="btn ghost" onClick={() => moveImg(list, setList, i, -1)} aria-label="Move up">↑</button>
+      <button className="btn ghost" onClick={() => moveImg(list, setList, i, 1)} aria-label="Move down">↓</button>
+      <button className="btn danger" onClick={() => delImg(list, setList, i, 'photo')}>✕</button>
+    </div>
+  ));
+
+  const libraryBrowser = (list, setList, cap) => {
+    const full = cap && list.length >= cap;
+    if (!library.length) return <p style={muted}>No project photos yet — add products first, or upload below.</p>;
+    return (
+      <div className="row" style={{ flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+        {library.map((item) => {
+          const added = list.some((x) => x.url === item.url);
+          return (
+            <button
+              key={item.url}
+              type="button"
+              className="btn ghost"
+              disabled={added || full}
+              onClick={() => pickInto(item, list, setList, cap)}
+              title={added ? 'Already added' : `Use ${item.name || 'this photo'}`}
+              style={{ padding: 4, lineHeight: 0 }}
+            >
+              <img src={item.url} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, opacity: added || full ? 0.4 : 1 }} loading="lazy" />
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
   const save = async () => {
     if (contactEmail.trim() && !EMAIL_RE.test(contactEmail.trim())) {
       alert('That email address doesn\u2019t look right. Please check it.');
@@ -58,6 +196,11 @@ export default function AboutAdmin() {
     const socialsClean = socials
       .filter((x) => (x.label || '').trim() || (x.url || '').trim())
       .map((x) => ({ label: (x.label || '').trim(), url: (x.url || '').trim() }));
+    const cleanImgs = (arr) => arr
+      .filter((x) => (x.url || '').trim())
+      .map((x, i) => ({ key: String(x.key || ikey()), url: x.url.trim(), publicId: x.publicId || null, name: String(x.name || ''), order: i }));
+    const infoGridClean = cleanImgs(infoGrid).slice(0, INFO_CAP);
+    const footerClean = cleanImgs(footerImages);
     setSaving(true);
     try {
       await s.saveSettings({
@@ -66,12 +209,16 @@ export default function AboutAdmin() {
         expertise: expertiseClean,
         testimonials: testisClean,
         socials: socialsClean,
+        infoGrid: infoGridClean,
+        footerImages: footerClean,
         contactEmail: contactEmail.trim(),
         location: location.trim(),
       });
       setExpertise(expertiseClean);
       setTestis(testisClean);
       setSocials(socialsClean);
+      setInfoGrid(infoGridClean);
+      setFooterImages(footerClean);
       setDirty(false);
       setSavedTick(true);
     } catch (e) {
@@ -144,6 +291,32 @@ export default function AboutAdmin() {
         <div className="row" style={{ marginTop: 8 }}>
           <button className="btn ghost" onClick={() => setSocialsD([...socials, { label: 'Instagram', url: 'https://' }])}>+ Add link</button>
         </div>
+      </div>
+      <div className="card">
+        <b>Info page photos ({infoGrid.length}/{INFO_CAP})</b>
+        <p style={muted}>Shows on: Info page photo mosaic, positions 1–12 in the order below.</p>
+        {photoRows(infoGrid, setInfoGrid, true)}
+        {infoGrid.length >= INFO_CAP
+          ? <p style={muted}>The grid is full (12 photos). Remove one to add another.</p>
+          : <>
+              <label>Upload photos</label>
+              <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { uploadInto(e.target.files, infoGrid, setInfoGrid, setInfoBusy, setInfoErr, INFO_CAP); e.target.value = ''; }} disabled={infoBusy} />
+            </>}
+        {infoBusy && <p>Uploading…</p>}
+        {infoErr && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{infoErr}</p>}
+        <label style={{ marginTop: 8 }}>Or pick from your products</label>
+        {libraryBrowser(infoGrid, setInfoGrid, INFO_CAP)}
+      </div>
+      <div className="card">
+        <b>Footer photos ({footerImages.length})</b>
+        <p style={muted}>Shows on: footer background, rotating in the order below.</p>
+        {photoRows(footerImages, setFooterImages, false)}
+        <label>Upload photos</label>
+        <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { uploadInto(e.target.files, footerImages, setFooterImages, setFootBusy, setFootErr, 0); e.target.value = ''; }} disabled={footBusy} />
+        {footBusy && <p>Uploading…</p>}
+        {footErr && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{footErr}</p>}
+        <label style={{ marginTop: 8 }}>Or pick from your products</label>
+        {libraryBrowser(footerImages, setFooterImages, 0)}
       </div>
       <div className="card">
         <b>Contact</b>

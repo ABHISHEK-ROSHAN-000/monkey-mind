@@ -4,13 +4,10 @@ import { useSite } from '../lib/store.jsx';
 import { deliveryUrl } from '../lib/cloudinary.js';
 
 export function Inquiry() {
-  const { settings, publishedProjects } = useSite();
-  const covers = publishedProjects
-    .map((p) => {
-      const m = p.thumbnail?.url ? p.thumbnail : (p.media || []).find((x) => x.type !== 'video') || p.media?.[0];
-      if (m && m.type !== 'video') return deliveryUrl(m, { w: 4000 });
-      return p.cover || null;
-    })
+  const { settings } = useSite();
+  const covers = (Array.isArray(settings.footerImages) ? settings.footerImages : [])
+    .filter((x) => x && x.url)
+    .map((x) => deliveryUrl({ url: x.url, publicId: x.publicId || null }, { w: 4000 }))
     .filter(Boolean);
   const [idx, setIdx] = useState(0);
 

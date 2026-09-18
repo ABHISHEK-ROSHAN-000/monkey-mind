@@ -19,7 +19,7 @@ const KIND = ['F', 'S', 'F', 'S', 'S', 'F', 'S', 'F', 'F', 'F', 'F', 'S'];
 const STATE_MS = 2500; // each preset holds 2.5s, loops 1→2→3→4→5→1
 
 export default function InfoHero() {
-  const { publishedProjects, settings } = useSite();
+  const { settings } = useSite();
   const [COUNT, setCOUNT] = useState(12);
   const [idx, setIdx] = useState(0);
   const [staticAll, setStaticAll] = useState(false);
@@ -33,21 +33,12 @@ export default function InfoHero() {
   }, []);
 
   const cells = useMemo(() => {
-    const seen = new Set();
-    const out = [];
-    const push = (m) => {
-      if (!m?.url || seen.has(m.url)) return;
-      seen.add(m.url);
-      out.push(m);
-    };
-    for (const p of publishedProjects) {
-      for (const m of p.media || []) {
-        if (m.type !== 'video') push(m);
-      }
-      if (p.cover) push({ url: p.cover });
-    }
-    return out.slice(0, COUNT);
-  }, [publishedProjects, COUNT]);
+    const src = Array.isArray(settings.infoGrid) ? settings.infoGrid : [];
+    return src
+      .filter((x) => x && x.url)
+      .slice(0, COUNT)
+      .map((x) => ({ url: x.url, publicId: x.publicId || null }));
+  }, [settings.infoGrid, COUNT]);
 
   useEffect(() => {
     setIdx(0);
