@@ -9,7 +9,7 @@ export const isCloudinaryConfigured = Boolean(CLOUD && PRESET);
 
 export function cloudinaryUrl(publicId, { w = 1200 } = {}) {
   if (!publicId || !CLOUD) return null;
-  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w}/${publicId}`;
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w},c_limit/${publicId}`;
 }
 
 // Optimized delivery URL for a stored media item { url, publicId, type }.
@@ -19,8 +19,8 @@ export function cloudinaryUrl(publicId, { w = 1200 } = {}) {
 export function deliveryUrl(m, { w = 1200 } = {}) {
   if (!m?.url) return null;
   if (m.type === 'gif' || !m.publicId || !CLOUD) return m.url;
-  if (m.type === 'video') return `https://res.cloudinary.com/${CLOUD}/video/upload/q_auto,w_${w},f_auto/${m.publicId}`;
-  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w}/${m.publicId}`;
+  if (m.type === 'video') return `https://res.cloudinary.com/${CLOUD}/video/upload/q_auto,w_${w},c_limit,f_auto/${m.publicId}`;
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/f_auto,q_auto,w_${w},c_limit/${m.publicId}`;
 }
 
 export async function uploadToCloudinary(file, folder = 'monkey-mind') {

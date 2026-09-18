@@ -108,16 +108,71 @@ button { font-family: inherit; cursor: pointer; }
 .list-spacer { min-width: 0; }
 .list-year { color: #8f8f8f; font-size: .8rem; font-weight: 500; text-align: right; }
 
-/* Works: feed */
-.works-feed { display: flex; flex-direction: column; gap: 28px; }
-.feed-item .thumb { overflow: hidden; }
-.feed-item img, .feed-item video { width: 100%; aspect-ratio: 5/6; object-fit: cover; }
-.feed-item h3 { margin: 10px 2px 0; font-weight: 500; font-size: 18px; letter-spacing: -.02em; line-height: 1.2; }
+/* View switching — layout morph approximation (enter animation per view) */
+.view-stage { animation: view-in .8s cubic-bezier(.22,.61,.36,1); }
+.view-stage[data-view="grid"] { animation-duration: .7s; }
+.view-stage[data-view="full"] { animation-duration: 1.2s; }
+@keyframes view-in { from { opacity: 0; transform: translateY(14px) scale(.995); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .view-stage { animation: none; }
+}
 
-/* Works: full-bleed */
-.works-full .full-item { margin: 0 calc(50% - 50vw); }
-.works-full .full-item img, .works-full .full-item video { width: 100%; height: 72vh; object-fit: cover; }
-.works-full .full-cap { max-width: var(--max); margin: 10px auto 34px; padding: 0 140px; font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
+/* Works: feed — stacked rows everywhere; template cards + camera-push hover on desktop */
+.works-feed { display: flex; flex-direction: column; gap: 28px; }
+.feed-frame { position: relative; overflow: hidden; }
+.feed-photo img, .feed-photo video { width: 100%; aspect-ratio: 5/6; object-fit: cover; display: block; }
+.feed-cap { margin: 10px 2px 0; font-weight: 500; font-size: 18px; letter-spacing: -.02em; line-height: 1.2; }
+.feed-hover { display: none; }
+@media (hover: hover) and (pointer: fine) and (min-width: 1100px) {
+  .works-feed { gap: 4px; max-width: 1620px; margin: 20px auto 0; padding: 0 30px; }
+  .feed-item { display: block; position: relative; width: 780px; max-width: 100%; height: 602px; margin: 0 auto; }
+  .feed-frame { height: 100%; overflow: visible; z-index: 3; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+  .feed-photo { position: absolute; inset: 0; overflow: hidden; z-index: 3; }
+  .feed-photo img, .feed-photo video { position: relative; left: 50%; width: 120%; height: 100%; object-fit: cover; object-position: center; display: block; transform: translateX(-50%); transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+  .feed-hover { display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none; perspective: 1200px; }
+  .feed-hover .sup { position: absolute; top: 48px; bottom: 48px; width: 100%; height: 85%; object-fit: cover; opacity: 0; transition: transform 1s ease-out .16s, opacity 1s ease-out .16s; }
+  .feed-hover .sup.left { transform-origin: left center; transform: rotateY(45deg) scale(.7); }
+  .feed-hover .sup.right { transform-origin: right center; transform: rotateY(-45deg) scale(.7); }
+  .feed-mask { display: none; }
+  .feed-cap { position: absolute; left: 40px; bottom: 6px; z-index: 1; margin: 0; text-align: left; }
+  .feed-title { font-size: .8rem; font-weight: 500; letter-spacing: -.01em; color: var(--ink); }
+  .feed-year { display: none; }
+  .feed-item:hover .feed-frame, .feed-item:focus-within .feed-frame { transform: scale(.89); }
+  .feed-item:hover .feed-photo img, .feed-item:hover .feed-photo video,
+  .feed-item:focus-within .feed-photo img, .feed-item:focus-within .feed-photo video { transform: translateX(-50%) scale(1.12); }
+  .feed-item:hover .sup.left, .feed-item:focus-within .sup.left,
+  .feed-item:hover .sup.right, .feed-item:focus-within .sup.right { opacity: 1; transition: transform .9s cubic-bezier(.22,.61,.36,1) .2s, opacity .9s cubic-bezier(.22,.61,.36,1) .2s; }
+  .feed-item:hover .sup.left, .feed-item:focus-within .sup.left { transform: translateX(-635px) rotateY(0deg) scale(1); }
+  .feed-item:hover .sup.right, .feed-item:focus-within .sup.right { transform: translateX(635px) rotateY(0deg) scale(1); }
+}
+@media (max-width: 1099.98px) {
+  .view-stage[data-view="feed"] { animation-duration: .9s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .feed-frame, .feed-photo img, .feed-photo video, .feed-hover .sup, .feed-cap { transition: none; }
+  .feed-hover { display: none; }
+  .feed-cap { opacity: 1; }
+}
+
+/* Works: full — 95vh wrap-width cards, dimmed backdrop, centered foreground, meta row */
+.works-full { display: flex; flex-direction: column; gap: 6px; }
+.full-item { position: relative; display: block; width: 100%; height: 95vh; height: 95svh; overflow: hidden; }
+.full-bg, .full-bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.full-bg img { filter: brightness(.45); transition: transform .8s cubic-bezier(.22,.61,.36,1); }
+.full-fg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.full-fg img { width: min(400px, 72%); aspect-ratio: 4/5; object-fit: cover; display: block; }
+.full-meta { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; padding: 24px 28px; color: #fff; font-size: .8rem; font-weight: 500; }
+.full-meta span:nth-child(2) { text-align: center; }
+.full-meta span:last-child { text-align: right; }
+.full-fg .cycle { position: relative; width: min(400px, 72%); aspect-ratio: 4/5; }
+.full-fg .cycle img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .45s ease; }
+.full-fg .cycle img.on { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .full-item:hover .full-bg img, .full-item:focus-within .full-bg img { transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .full-bg img, .full-fg .cycle img { transition: none; }
+}
 
 /* Expertise — label-left/lede-right header + ruled 3-column rows */
 .expertise { margin: 120px 0 64px; }
@@ -258,7 +313,6 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
 @media (max-width: 1100px) {
   .wrap { padding: 0 48px; }
   .testi-head { padding: 0 48px; }
-  .works-full .full-cap { padding: 0 48px; }
   .works-grid { grid-template-columns: repeat(3, 1fr); }
   .exp-row { flex-wrap: wrap; }
   .exp-num-wrap, .exp-content-wrap { width: 100%; }

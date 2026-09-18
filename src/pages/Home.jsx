@@ -54,12 +54,12 @@ export default function Home() {
           )}
         </div>
       ) : (
-        <>
+        <div className="view-stage" key={view} data-view={view}>
           {view === 'grid' && <WorkGrid items={selected} />}
           {view === 'list' && <WorkList items={selected} />}
           {view === 'feed' && <WorkFeed items={selected} />}
           {view === 'full' && <WorkFull items={selected} />}
-        </>
+        </div>
       )}
 
       <Expertise />
