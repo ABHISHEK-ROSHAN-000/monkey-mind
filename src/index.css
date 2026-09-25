@@ -77,6 +77,14 @@ button { font-family: inherit; cursor: pointer; }
 .view-switch button:hover { color: var(--ink); }
 .view-switch button.on { color: var(--ink); }
 
+/* Category switcher (All Projects page) — same type treatment as .view-switch,
+   but a separate class so the mobile last-button rule for Home's Full tab
+   can never hide a category. Scrolls horizontally on narrow screens. */
+.cat-switch { display: flex; width: 50%; justify-content: flex-end; gap: 32px; overflow-x: auto; }
+.cat-switch button { border: 0; background: transparent; padding: 0; flex-shrink: 0; font-size: .8rem; font-weight: 500; letter-spacing: -.018em; line-height: 1.2; color: var(--tab-dim); transition: color .15s ease; }
+.cat-switch button:hover { color: var(--ink); }
+.cat-switch button.on { color: var(--ink); }
+
 /* Works: grid — 4-col edge-to-edge image tiles, no chrome */
 .works-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 .work-tile { position: relative; display: block; aspect-ratio: 1/1; }
@@ -340,6 +348,7 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .view-switch { max-width: none; width: 100%; margin-left: 0; }
   .view-switch button { font-size: 22px; }
   .view-switch button:last-child { display: none; }
+  .cat-switch { width: 100%; }
   .works-grid { grid-template-columns: repeat(2, 1fr); }
   .work-tile { aspect-ratio: auto; }
   .work-tile .tile-frame { position: relative; inset: auto; aspect-ratio: 1/1; }

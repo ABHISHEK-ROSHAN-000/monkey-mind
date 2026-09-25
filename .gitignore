@@ -15,6 +15,11 @@ dist-ssr
 .env.*
 !.env.example
 
+# Service-account keys and migration backups (never commit credentials)
+*-firebase-adminsdk-*.json
+migration-backup/
+migration-assets/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
