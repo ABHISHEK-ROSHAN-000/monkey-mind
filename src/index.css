@@ -85,6 +85,9 @@ button { font-family: inherit; cursor: pointer; }
 .cat-switch button:hover { color: var(--ink); }
 .cat-switch button.on { color: var(--ink); }
 
+/* All Projects page — extra exhale between the grid and the footer */
+.projects-page { padding-bottom: 20vh; }
+
 /* Works: grid — 4-col edge-to-edge image tiles, no chrome */
 .works-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 .work-tile { position: relative; display: block; aspect-ratio: 1/1; }

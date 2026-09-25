@@ -11,7 +11,7 @@ export default function Projects() {
     ? [...publishedProjects].sort((a, b) => a.order - b.order)
     : publishedProjects.filter((p) => (p.categoryIds || []).includes(tab));
   return (
-    <>
+    <div className="projects-page">
       <section className="hero" style={{ paddingBottom: 0 }}>
         <h1>Worked on</h1>
         {/* <p className="blurb">Every project grouped by discipline. Pick a category to jump in.</p> */}
@@ -66,6 +66,6 @@ export default function Projects() {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
