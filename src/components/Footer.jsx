@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../lib/store.jsx';
 import { deliveryUrl } from '../lib/cloudinary.js';
+import Marquee from './Marquee.jsx';
 
 export function Inquiry() {
   const { settings } = useSite();
+  const year = new Date().getFullYear();
   const covers = (Array.isArray(settings.footerImages) ? settings.footerImages : [])
     .filter((x) => x && x.url)
     .map((x) => deliveryUrl({ url: x.url, publicId: x.publicId || null }, { w: 4000 }))
@@ -31,9 +33,21 @@ export function Inquiry() {
           <p>Based in<br /><span className="u">{settings.location}.</span></p>
         </div>
         <div className="inq-bottom">
-          <p className="big">Let&apos;s build something great together.</p>
-          <p className="big"><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>
-          <Link className="admin-link" to="/admin/login">Admin</Link>
+          <div className="inq-main">
+            <p className="big">Let&apos;s build something great together.</p>
+            <p className="big"><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>
+            <Link className="admin-link" to="/admin/login">Admin</Link>
+          </div>
+          <div className="colophon-side">
+            <nav className="colophon-links">
+              <Link to="/">Index</Link>
+              <Link to="/projects">Projects</Link>
+              {settings.socials.map((s) => (
+                <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+              ))}
+            </nav>
+            <p className="colophon-note">© {year} MMStudio. Built for creatives.</p>
+          </div>
         </div>
       </div>
     </footer>
@@ -41,22 +55,10 @@ export function Inquiry() {
 }
 
 export function Colophon() {
-  const { settings } = useSite();
-  const year = new Date().getFullYear();
   return (
     <footer className="colophon">
       <div className="wrap colophon-inner">
-        <p className="colophon-mark">MONKEY<br />MIND</p>
-        <div className="colophon-side">
-          <nav className="colophon-links">
-            <Link to="/">Index</Link>
-            <Link to="/projects">Projects</Link>
-            {settings.socials.map((s) => (
-              <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
-            ))}
-          </nav>
-          <p className="colophon-note">© {year} MMStudio. Built for creatives.</p>
-        </div>
+        <Marquee text="MONKEYMIND" />
       </div>
     </footer>
   );

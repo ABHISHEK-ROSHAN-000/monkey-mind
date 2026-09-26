@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 import { WorkGrid } from '../components/WorkViews.jsx';
+import Marquee from '../components/Marquee.jsx';
 
 export default function Projects() {
   const { categories, publishedProjects, syncError } = useSite();
   const [tab, setTab] = useState('all');
+  const yy = String(new Date().getFullYear()).slice(-2);
   const sorted = [...categories].sort((a, b) => a.order - b.order);
   const active = sorted.find((c) => c.id === tab);
   const items = tab === 'all'
@@ -13,7 +15,7 @@ export default function Projects() {
   return (
     <div className="projects-page">
       <section className="hero" style={{ paddingBottom: 0 }}>
-        <h1>Worked on</h1>
+        <Marquee text={`WORKS (20-${yy})`} />
         {/* <p className="blurb">Every project grouped by discipline. Pick a category to jump in.</p> */}
         {/* <div className="hero-social">
           {settings.socials.map((s) => (
@@ -28,11 +30,7 @@ export default function Projects() {
         <p style={{ color: 'var(--muted)' }}>No categories yet — add them in the CMS.</p>
       )}
       {sorted.length > 0 && (
-        <div className="sec-head">
-          <div className="sec-title">
-            <h2>Categories</h2>
-          </div>
-          <nav className="cat-switch" aria-label="Categories">
+        <nav className="cat-switch" aria-label="Categories">
             <button
               key="all"
               className={tab === 'all' ? 'on' : ''}
@@ -53,7 +51,6 @@ export default function Projects() {
               );
             })}
           </nav>
-        </div>
       )}
       {sorted.length > 0 && (
         <div className="view-stage" key={tab} data-view="projects">
