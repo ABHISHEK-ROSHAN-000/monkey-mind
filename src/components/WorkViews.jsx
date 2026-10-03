@@ -13,7 +13,7 @@ function tileSource(p) {
 
 function Thumb({ p }) {
   // No inline sizing: CSS owns layout (absolute fill + clip-path hover).
-  const src = deliveryUrl(tileSource(p), { w: 800 });
+  const src = deliveryUrl(tileSource(p), { w: 1600 });
   return <img src={src} alt={p.title} loading="lazy" />;
 }
 
