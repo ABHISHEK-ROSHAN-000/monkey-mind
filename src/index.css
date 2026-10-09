@@ -366,10 +366,11 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .view-switch { max-width: none; width: 100%; margin-left: 0; }
   .view-switch button { font-size: 22px; }
   .view-switch button:last-child { display: none; }
-  .works-grid { grid-template-columns: 1fr; }
-  .work-tile { aspect-ratio: 4/5; }
-  .work-tile .tile-frame { position: relative; inset: auto; aspect-ratio: 4/5; }
+  .works-grid { grid-template-columns: repeat(2, 1fr); }
+  .work-tile { aspect-ratio: auto; }
+  .work-tile .tile-frame { position: relative; inset: auto; aspect-ratio: 1/1; }
   .work-tile .tile-cap { position: static; display: block; opacity: 1; text-align: center; padding: 8px 4px 4px; }
+  .work-tile:hover .tile-frame { clip-path: inset(0); }
   .work-tile:hover .tile-frame img { transform: none; }
   .list-row:hover { background: none; }
   .list-row:hover .list-thumb .t1 { opacity: 0; }
@@ -388,6 +389,12 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .exp-content-wrap p { max-width: none; }
   .exp-row .n { font-size: 4.5rem; }
   .cat-group h3 { font-size: 24px; }
+  .cat-switch { justify-content: flex-start; gap: 24px; margin: 36px 0 28px; padding: 0 0 12px; scroll-padding: 0; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .cat-switch::-webkit-scrollbar { display: none; }
+  .cat-switch button { font-size: 1rem; scroll-snap-align: start; }
+  .cat-switch.can-left { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px); mask-image: linear-gradient(to right, transparent, #000 44px); }
+  .cat-switch.can-right { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
+  .cat-switch.can-left.can-right { -webkit-mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
   .detail-hero { padding-top: 25vh; }
   .detail-hero h1 { font-size: 28px; }
   .foot-grid .big { font-size: 28px; }

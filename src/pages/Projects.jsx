@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
 import { WorkGrid } from '../components/WorkViews.jsx';
 import Marquee from '../components/Marquee.jsx';
@@ -6,9 +6,33 @@ import Marquee from '../components/Marquee.jsx';
 export default function Projects() {
   const { categories, publishedProjects, syncError } = useSite();
   const [tab, setTab] = useState('all');
+  const switchRef = useRef(null);
   const yy = String(new Date().getFullYear()).slice(-2);
   const sorted = [...categories].sort((a, b) => a.order - b.order);
   const active = sorted.find((c) => c.id === tab);
+
+  // Dynamic scroll-edge fades: mark which ends of the tab row are scrollable
+  // (mobile CSS fades the marked ends). Re-runs when CMS categories arrive.
+  useEffect(() => {
+    const el = switchRef.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = el.scrollWidth - el.clientWidth;
+      el.classList.toggle('can-left', el.scrollLeft > 4);
+      el.classList.toggle('can-right', el.scrollLeft < max - 4);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [sorted.length]);
   const items = tab === 'all'
     ? [...publishedProjects].sort((a, b) => a.order - b.order)
     : publishedProjects.filter((p) => (p.categoryIds || []).includes(tab));
@@ -30,7 +54,7 @@ export default function Projects() {
         <p style={{ color: 'var(--muted)' }}>No categories yet — add them in the CMS.</p>
       )}
       {sorted.length > 0 && (
-        <nav className="cat-switch" aria-label="Categories">
+        <nav ref={switchRef} className="cat-switch" aria-label="Categories">
             <button
               key="all"
               className={tab === 'all' ? 'on' : ''}
