@@ -1,12 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSite } from '../lib/store.jsx';
-import { WorkGrid } from '../components/WorkViews.jsx';
+import { WorkFeed, WorkGrid } from '../components/WorkViews.jsx';
 import Marquee from '../components/Marquee.jsx';
 
 export default function Projects() {
   const { categories, publishedProjects, syncError } = useSite();
   const [tab, setTab] = useState('all');
   const switchRef = useRef(null);
+  // Mobile shows the stacked feed; desktop keeps the grid.
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia('(max-width: 768px)').matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
   const yy = String(new Date().getFullYear()).slice(-2);
   const sorted = [...categories].sort((a, b) => a.order - b.order);
   const active = sorted.find((c) => c.id === tab);
@@ -83,7 +93,7 @@ export default function Projects() {
               {tab === 'all' ? 'No published projects yet.' : `No published projects in ${active?.name || 'this category'} yet.`}
             </p>
           ) : (
-            <WorkGrid items={items} />
+            isMobile ? <WorkFeed items={items} /> : <WorkGrid items={items} />
           )}
         </div>
       )}
