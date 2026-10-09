@@ -398,10 +398,11 @@ table.tbl th, table.tbl td { text-align: left; padding: 10px 8px; border-bottom:
   .detail-hero { padding-top: 25vh; }
   .detail-hero h1 { font-size: 28px; }
   .foot-grid .big { font-size: 28px; }
-  .testi-head { flex-wrap: wrap; padding: 0 20px; }
+  .testi-head { flex-wrap: wrap; padding: 32px 20px 0; }
   .testi-head > * { width: 100%; }
   .testi-head h2 { font-size: 24px; }
-  .testi-track { margin-top: 36px; }
+  .testi-track { margin-top: 0; }
+  .testi-marquee { margin: 13vh 0; }
   .testi-track.flow .testi { flex-basis: 82vw; }
   .testi-brand { font-size: 26px; margin-bottom: 20px; }
   .testi q { font-size: 22px; }
