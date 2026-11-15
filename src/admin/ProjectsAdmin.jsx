@@ -8,8 +8,8 @@ const pill = (visible) => ({
   borderRadius: 200,
   fontSize: '.8rem',
   fontWeight: 600,
-  background: visible ? '#e7f4e7' : '#f0f0f0',
-  color: visible ? '#1e7e34' : '#5e5e5e',
+  background: visible ? 'var(--success-bg)' : 'var(--chip-muted)',
+  color: visible ? 'var(--success)' : 'var(--muted)',
 });
 
 export default function ProjectsAdmin() {

@@ -34,6 +34,17 @@ const EMPTY_SETTINGS = {
   footerImages: [],
 };
 
+// Stored docs from older releases only carry some keys; deep-merge the known
+// nested objects so new fields never come back undefined.
+function normalizeSettings(data = {}) {
+  return {
+    ...EMPTY_SETTINGS,
+    ...data,
+    home: { ...EMPTY_SETTINGS.home, ...data.home },
+    about: { ...EMPTY_SETTINGS.about, ...data.about },
+  };
+}
+
 const slugify = (s) => String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0);
@@ -128,7 +139,7 @@ export function SiteProvider({ children }) {
     const u3 = onSnapshot(
       doc(db, 'siteSettings', 'site'),
       (snap) => {
-        if (snap.exists()) setSettings({ ...EMPTY_SETTINGS, ...snap.data() });
+        if (snap.exists()) setSettings(normalizeSettings(snap.data()));
         markReady();
       },
       onErr,
@@ -162,10 +173,16 @@ export function SiteProvider({ children }) {
         slug: ((input.slug || '').trim() || slugify(input.title || '')),
         cover: String(input.cover || ''),
         thumbnail: cleanThumbnail(input.thumbnail),
+        hover1: cleanThumbnail(input.hover1),
+        hover2: cleanThumbnail(input.hover2),
         media: cleanMedia(input.media),
         categoryIds: (Array.isArray(input.categoryIds) ? input.categoryIds : []).filter((c) => typeof c === 'string'),
         excerpt: String(input.excerpt || ''),
         body: String(input.body || ''),
+        approach: String(input.approach || ''),
+        company: String(input.company || ''),
+        timeline: String(input.timeline || ''),
+        duration: String(input.duration || ''),
         year: String(input.year || ''),
         tags: (Array.isArray(input.tags) ? input.tags : []).map((t) => String(t)),
         featured: !!input.featured,

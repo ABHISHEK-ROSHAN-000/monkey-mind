@@ -40,7 +40,7 @@ export default function Login() {
         <input type="email" required autoComplete="username" maxLength={120} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@studio.in" />
         <label>Password</label>
         <input type="password" required autoComplete="current-password" maxLength={128} value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••••" />
-        {err && <p style={{ color: '#b3261e' }}>{err}</p>}
+        {err && <p style={{ color: 'var(--danger)' }}>{err}</p>}
         <div className="row" style={{ marginTop: 14 }}>
           <button className="btn" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
         </div>

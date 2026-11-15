@@ -40,6 +40,11 @@ export default function InfoHero() {
       .map((x) => ({ url: x.url, publicId: x.publicId || null }));
   }, [settings.infoGrid, COUNT]);
 
+  // The stored studio title is "MONKEYMIND" (one word). Break it for the
+  // display setting so the giant title can wrap instead of clipping.
+  const title = ((settings.about?.title || 'MONKEY MIND').trim() || 'MONKEY MIND')
+    .replace(/MONKEYMIND/i, 'MONKEY MIND');
+
   useEffect(() => {
     setIdx(0);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -58,15 +63,15 @@ export default function InfoHero() {
 
   if (!cells.length) {
     return (
-      <section className="info-hero" aria-label={settings.about.title}>
-        <h1 className="info-title">{settings.about.title}</h1>
+      <section className="info-hero" aria-label={title}>
+        <h1 className="info-title">{title}</h1>
       </section>
     );
   }
 
   return (
-    <section className="info-hero" aria-label={settings.about.title}>
-      <h1 className="info-title">{settings.about.title}</h1>
+    <section className="info-hero" aria-label={title}>
+      <h1 className="info-title">{title}</h1>
       <div className="info-grid">
         {cells.map((cell, i) => {
           const visible = staticAll || STATES[idx][i] === 1;

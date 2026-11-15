@@ -14,14 +14,61 @@ export default function ProjectDetail() {
       </section>
     );
   }
+  const brief = (p.body || '').trim();
+  const approach = (p.approach || '').trim();
+  const company = (p.company || '').trim();
+  const timeline = (p.timeline || p.year || '').trim();
+  const duration = (p.duration || '').trim();
+  const tags = (p.tags || []).filter(Boolean);
+  const hasFacts = tags.length > 0 || company || timeline || duration;
+
   return (
     <>
       <section className="detail-hero">
         <h1>{p.title}</h1>
-        <p>{p.body}</p>
-        <div className="detail-meta">
-          <span>{p.year}</span>
-          <span>{p.tags?.join(', ')}</span>
+        <div className="detail-grid">
+          <div className="detail-brief">
+            {brief && (
+              <div className="detail-block">
+                <p className="detail-label">Project Brief</p>
+                <p className="detail-copy">{brief}</p>
+              </div>
+            )}
+            {hasFacts && (
+              <dl className="detail-meta">
+                {tags.length > 0 && (
+                  <div className="detail-meta-item">
+                    <dt>Service</dt>
+                    <dd>{tags.join(', ')}</dd>
+                  </div>
+                )}
+                {company && (
+                  <div className="detail-meta-item">
+                    <dt>Company</dt>
+                    <dd>{company}</dd>
+                  </div>
+                )}
+                {timeline && (
+                  <div className="detail-meta-item">
+                    <dt>Timeline</dt>
+                    <dd>{timeline}</dd>
+                  </div>
+                )}
+                {duration && (
+                  <div className="detail-meta-item">
+                    <dt>Duration</dt>
+                    <dd>{duration}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+          </div>
+          {approach && (
+            <div className="detail-approach">
+              <p className="detail-label">Our Approach</p>
+              <p className="detail-copy">{approach}</p>
+            </div>
+          )}
         </div>
       </section>
       <MediaGallery

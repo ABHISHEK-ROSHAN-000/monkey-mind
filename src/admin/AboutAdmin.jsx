@@ -303,7 +303,7 @@ export default function AboutAdmin() {
               <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { uploadInto(e.target.files, infoGrid, setInfoGrid, setInfoBusy, setInfoErr, INFO_CAP); e.target.value = ''; }} disabled={infoBusy} />
             </>}
         {infoBusy && <p>Uploading…</p>}
-        {infoErr && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{infoErr}</p>}
+        {infoErr && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{infoErr}</p>}
         <label style={{ marginTop: 8 }}>Or pick from your products</label>
         {libraryBrowser(infoGrid, setInfoGrid, INFO_CAP)}
       </div>
@@ -314,7 +314,7 @@ export default function AboutAdmin() {
         <label>Upload photos</label>
         <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { uploadInto(e.target.files, footerImages, setFooterImages, setFootBusy, setFootErr, 0); e.target.value = ''; }} disabled={footBusy} />
         {footBusy && <p>Uploading…</p>}
-        {footErr && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{footErr}</p>}
+        {footErr && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{footErr}</p>}
         <label style={{ marginTop: 8 }}>Or pick from your products</label>
         {libraryBrowser(footerImages, setFooterImages, 0)}
       </div>
@@ -326,7 +326,7 @@ export default function AboutAdmin() {
       </div>
       <div className="row" style={{ alignItems: 'center' }}>
         <button className="btn" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save all changes'}</button>
-        {savedTick && !dirty && <span style={{ color: '#1e7e34', fontWeight: 600 }}>Saved ✓ live on the website</span>}
+        {savedTick && !dirty && <span style={{ color: 'var(--success)', fontWeight: 600 }}>Saved ✓ live on the website</span>}
       </div>
     </>
   );

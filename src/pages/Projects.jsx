@@ -58,7 +58,7 @@ export default function Projects() {
         </div> */}
       </section>
       {syncError && (
-        <p style={{ color: '#b3261e' }}>Couldn't load content: {syncError}</p>
+        <p style={{ color: 'var(--danger)' }}>Couldn't load content: {syncError}</p>
       )}
       {sorted.length === 0 && !syncError && (
         <p style={{ color: 'var(--muted)' }}>No categories yet — add them in the CMS.</p>

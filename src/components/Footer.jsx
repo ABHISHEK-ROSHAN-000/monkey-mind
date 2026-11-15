@@ -36,7 +36,7 @@ export function Inquiry() {
           <div className="inq-main">
             <p className="big">Let&apos;s build something great together.</p>
             <p className="big"><a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>
-            <Link className="admin-link" to="/admin/login">Admin</Link>
+            {/* <Link className="admin-link" to="/admin/login">Admin</Link> */}
           </div>
           <div className="colophon-side">
             <nav className="colophon-links">

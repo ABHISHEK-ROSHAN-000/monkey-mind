@@ -12,8 +12,9 @@ const OK_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const blank = () => ({
-  title: '', slug: '', categoryIds: [], excerpt: '', body: '', year: String(new Date().getFullYear()),
-  tags: [], cover: '', thumbnail: null, featured: false, status: 'published', media: [],
+  title: '', slug: '', categoryIds: [], excerpt: '', body: '', approach: '', company: '', timeline: '', duration: '',
+  year: String(new Date().getFullYear()),
+  tags: [], cover: '', thumbnail: null, hover1: null, hover2: null, featured: false, status: 'published', media: [],
 });
 
 export default function ProjectEditor() {
@@ -30,6 +31,8 @@ export default function ProjectEditor() {
   const [uploadErrors, setUploadErrors] = useState([]);
   const [thumbBusy, setThumbBusy] = useState(false);
   const [thumbError, setThumbError] = useState('');
+  const [hoverBusy, setHoverBusy] = useState('');
+  const [hoverError, setHoverError] = useState('');
   const [draggingKey, setDraggingKey] = useState(null);
   const dragKey = useRef(null);
   const rowRefs = useRef({});
@@ -115,7 +118,13 @@ export default function ProjectEditor() {
     markDirty();
     setForm((f) => {
       const media = f.media.filter((m) => m.key !== key);
-      return { ...f, media, cover: f.cover === gone.url ? '' : f.cover };
+      return {
+        ...f,
+        media,
+        cover: f.cover === gone.url ? '' : f.cover,
+        hover1: f.hover1?.url === gone.url ? null : f.hover1,
+        hover2: f.hover2?.url === gone.url ? null : f.hover2,
+      };
     });
   };
 
@@ -267,6 +276,56 @@ export default function ProjectEditor() {
     setForm((f) => ({ ...f, thumbnail: null }));
   };
 
+  const onHoverFile = async (field, files) => {
+    const f = files?.[0];
+    if (!f) return;
+    setHoverError('');
+    if (!isCloudinaryConfigured) {
+      setHoverError('Photo uploads aren\u2019t working right now. Contact your developer.');
+      return;
+    }
+    if (!OK_IMAGE_TYPES.includes(f.type)) {
+      setHoverError('Only JPG, PNG, WebP or GIF photos, please.');
+      return;
+    }
+    if (f.size > IMG_MAX_MB * 1024 * 1024) {
+      setHoverError(`Bigger than ${IMG_MAX_MB}MB — please use a smaller photo.`);
+      return;
+    }
+    setHoverBusy(field);
+    try {
+      const u = await uploadToCloudinary(f);
+      markDirty();
+      setForm((prev) => ({ ...prev, [field]: { url: u.url, publicId: u.publicId } }));
+    } catch (e) {
+      setHoverError(e?.message || 'Upload failed.');
+    } finally {
+      setHoverBusy('');
+    }
+  };
+
+  const sortedMedia = [...form.media].sort((a, b) => (a.order || 0) - (b.order || 0));
+  const stillMedia = sortedMedia
+    .map((m, i) => ({ ...m, photoNumber: i + 1 }))
+    .filter((m) => m.type !== 'video');
+  const customHover1 = !!form.hover1?.url && !stillMedia.some((m) => m.url === form.hover1.url);
+  const customHover2 = !!form.hover2?.url && !stillMedia.some((m) => m.url === form.hover2.url);
+  const setHover = (field, url) => {
+    setHoverError('');
+    if (!url) {
+      set(field, null);
+      return;
+    }
+    const picked = stillMedia.find((m) => m.url === url);
+    if (picked) {
+      set(field, { url: picked.url, publicId: picked.publicId || null });
+      return;
+    }
+    // Keep an already-uploaded custom image when its own option is re-selected.
+    const current = field === 'hover1' ? form.hover1 : form.hover2;
+    set(field, current?.url === url ? current : null);
+  };
+
   const cancel = () => {
     if (dirtyRef.current && !confirm('Leave without saving? Your changes will be lost.')) return;
     nav('/admin/projects');
@@ -294,7 +353,7 @@ export default function ProjectEditor() {
   };
 
   if (s.loading) return <p>Loading…</p>;
-  if (s.syncError && !s.projects.length && !isNew) return <p style={{ color: '#b3261e' }}>{s.syncError}</p>;
+  if (s.syncError && !s.projects.length && !isNew) return <p style={{ color: 'var(--danger)' }}>{s.syncError}</p>;
 
   return (
     <>
@@ -313,9 +372,17 @@ export default function ProjectEditor() {
               <div style={{ flex: 1 }}><label>Year</label><input value={form.year} onChange={(e) => set('year', e.target.value)} placeholder="e.g. 2025" maxLength={12} /></div>
               <div style={{ flex: 2 }}><label>Labels (comma separated)</label><input value={tagsStr} onChange={(e) => { markDirty(); setTagsStr(e.target.value); }} placeholder="Branding, Digital" /></div>
             </div>
-            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Labels are shown under the product name on the website.</p>
-            <label>Full description</label>
-            <textarea rows={5} value={form.body} onChange={(e) => set('body', e.target.value)} placeholder="Shown on the product page. Plain text." />
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Labels appear in project lists and as the Service value on the product page.</p>
+            <label>Project brief</label>
+            <textarea rows={5} value={form.body || ''} onChange={(e) => set('body', e.target.value)} placeholder="Short paragraph shown under “Project Brief” on the product page. Plain text." />
+            <label>Our approach</label>
+            <textarea rows={4} value={form.approach || ''} onChange={(e) => set('approach', e.target.value)} placeholder="Paragraph shown in the right-hand column. Plain text." />
+            <div className="row">
+              <div style={{ flex: 1 }}><label>Company</label><input value={form.company || ''} onChange={(e) => set('company', e.target.value)} placeholder="MonkeyMind Studio" maxLength={120} /></div>
+              <div style={{ flex: 1 }}><label>Timeline</label><input value={form.timeline || ''} onChange={(e) => set('timeline', e.target.value)} placeholder="2025-26" maxLength={40} /></div>
+              <div style={{ flex: 1 }}><label>Duration</label><input value={form.duration || ''} onChange={(e) => set('duration', e.target.value)} placeholder="9 Months" maxLength={40} /></div>
+            </div>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Company, timeline and duration appear in the project details row. Timeline falls back to Year when left blank.</p>
           </div>
 
           <div className="card">
@@ -328,7 +395,7 @@ export default function ProjectEditor() {
             <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" onChange={(e) => onFiles(e.target.files)} disabled={busy || !isCloudinaryConfigured} />
             {busy && <p>Uploading…</p>}
             {uploadErrors.length > 0 && (
-              <div style={{ color: '#b3261e', fontSize: '.85rem', marginTop: 8 }}>
+              <div style={{ color: 'var(--danger)', fontSize: '.85rem', marginTop: 8 }}>
                 {uploadErrors.map((m, i) => <p key={i} style={{ margin: '4px 0' }}>{m}</p>)}
               </div>
             )}
@@ -356,7 +423,7 @@ export default function ProjectEditor() {
                     <span className="mtitle">{i + 1}. {form.cover === m.url ? 'Main photo' : (m.type === 'video' ? 'Video' : 'Photo')}</span>
                     <span className="mname" title={m.name || m.caption || 'Untitled file'}>{m.name || m.caption || 'Untitled file'}</span>
                     <input value={m.caption || ''} onChange={(e) => setCaption(m.key, e.target.value)} placeholder="Short text under this photo (optional)" maxLength={140} />
-                    {m.type === 'video' && <span className="mnote">Videos can\u2019t be the main photo or thumbnail — tiles always show stills.</span>}
+                    {m.type === 'video' && <span className="mnote">Videos can’t be the main photo or thumbnail — tiles always show stills.</span>}
                   </span>
                   <span className="mactions">
                     <span className="row">
@@ -388,7 +455,7 @@ export default function ProjectEditor() {
             <label>Upload a thumbnail photo</label>
             <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { onThumbFile(e.target.files); e.target.value = ''; }} disabled={thumbBusy || busy || saving || !isCloudinaryConfigured} />
             {thumbBusy && <p>Uploading…</p>}
-            {thumbError && <p style={{ color: '#b3261e', fontSize: '.85rem' }}>{thumbError}</p>}
+            {thumbError && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{thumbError}</p>}
             <div className="row" style={{ marginTop: 8 }}>
               <button className="btn ghost" onClick={copyCoverAsThumb} disabled={!form.cover}>Use main photo</button>
             </div>
@@ -396,7 +463,46 @@ export default function ProjectEditor() {
           </div>
 
           <div className="card">
-            <b>4. Who can see this</b>
+            <b>4. List + feed hover images</b>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
+              List view uses Hover image 1 when a row is hovered. Feed view uses Hover image 1 and Hover image 2. Leave a slot on Automatic to keep using the next gallery photo. You can also upload a separate custom image for either slot.
+            </p>
+            {hoverError && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{hoverError}</p>}
+            <div className="row" style={{ alignItems: 'flex-start', gap: 24 }}>
+              <div style={{ flex: 1 }}>
+                <label>Hover image 1 (List + Feed)</label>
+                <select value={form.hover1?.url || ''} onChange={(e) => setHover('hover1', e.target.value)}>
+                  <option value="">Automatic — next gallery photo</option>
+                  {customHover1 && <option value={form.hover1.url}>Custom uploaded image</option>}
+                  {stillMedia.map((m) => (
+                    <option key={m.key} value={m.url}>{m.photoNumber}. {m.name || m.caption || 'Photo'}</option>
+                  ))}
+                </select>
+                {form.hover1?.url && <img src={form.hover1.url} alt="" style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 10, marginTop: 8 }} loading="lazy" />}
+                <label style={{ marginTop: 10 }}>Upload a custom image</label>
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { onHoverFile('hover1', e.target.files); e.target.value = ''; }} disabled={!!hoverBusy || busy || saving || !isCloudinaryConfigured} />
+                {hoverBusy === 'hover1' && <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Uploading…</p>}
+              </div>
+              <div style={{ flex: 1 }}>
+                <label>Hover image 2 (Feed)</label>
+                <select value={form.hover2?.url || ''} onChange={(e) => setHover('hover2', e.target.value)}>
+                  <option value="">Automatic — next gallery photo</option>
+                  {customHover2 && <option value={form.hover2.url}>Custom uploaded image</option>}
+                  {stillMedia.map((m) => (
+                    <option key={m.key} value={m.url}>{m.photoNumber}. {m.name || m.caption || 'Photo'}</option>
+                  ))}
+                </select>
+                {form.hover2?.url && <img src={form.hover2.url} alt="" style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 10, marginTop: 8 }} loading="lazy" />}
+                <label style={{ marginTop: 10 }}>Upload a custom image</label>
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => { onHoverFile('hover2', e.target.files); e.target.value = ''; }} disabled={!!hoverBusy || busy || saving || !isCloudinaryConfigured} />
+                {hoverBusy === 'hover2' && <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Uploading…</p>}
+              </div>
+            </div>
+            <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 8 }}>Custom uploads are used only for these hover states. They are not added to the project gallery.</p>
+          </div>
+
+          <div className="card">
+            <b>5. Who can see this</b>
             <label>Visibility</label>
             <select value={form.status} onChange={(e) => set('status', e.target.value)}>
               <option value="published">Visible to everyone</option>

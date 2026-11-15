@@ -20,7 +20,7 @@ export default function Dashboard() {
       {broken && (
         <div className="card">
           <b>Something needs attention</b>
-          {s.syncError && <p style={{ color: '#b3261e' }}>{s.syncError}</p>}
+          {s.syncError && <p style={{ color: 'var(--danger)' }}>{s.syncError}</p>}
           {(!isFirebaseConfigured || !isCloudinaryConfigured) && (
             <p style={{ color: 'var(--muted)', fontSize: '.9rem' }}>Saving or photo uploads aren't working. Contact your developer.</p>
           )}

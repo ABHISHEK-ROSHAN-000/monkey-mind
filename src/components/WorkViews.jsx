@@ -33,7 +33,7 @@ export function WorkGrid({ items }) {
 function ListThumb({ p }) {
   const imgs = (p.media || []).filter((m) => m.type !== 'video');
   const first = p.thumbnail?.url ? p.thumbnail : imgs[0];
-  const second = imgs[1];
+  const second = p.hover1?.url && p.hover1.url !== first?.url ? p.hover1 : imgs[1];
   return (
     <span className="list-thumb">
       <img className="t0" src={deliveryUrl(first, { w: 800 }) || p.cover} alt="" loading="lazy" />
@@ -90,13 +90,19 @@ export function WorkFeed({ items }) {
   );
 }
 
-// Feed hover layer: first two supporting gallery photos, skipping videos
-// and whatever the main tile already shows. Either may be absent.
+// Feed hover layer: CMS-selected Hover 1/Hover 2 images when present,
+// otherwise the first two supporting gallery photos. Either may be absent.
 function feedSupport(p) {
   const mainUrl = tileSource(p)?.url;
-  return (p.media || [])
-    .filter((m) => m.type !== 'video' && m.url && m.url !== mainUrl)
-    .slice(0, 2);
+  const stills = (p.media || []).filter((m) => m.type !== 'video' && m.url);
+  const auto = stills.filter((m) => m.url !== mainUrl);
+  const custom1 = p.hover1?.url ? p.hover1 : null;
+  const custom2 = p.hover2?.url ? p.hover2 : null;
+  const first = custom1 && custom1.url !== mainUrl ? custom1 : auto[0];
+  const second = custom2 && custom2.url !== mainUrl && custom2.url !== first?.url
+    ? custom2
+    : auto.find((m) => m.url !== first?.url);
+  return [first, second].filter((m) => m?.url).slice(0, 2);
 }
 
 export function WorkFull({ items }) {

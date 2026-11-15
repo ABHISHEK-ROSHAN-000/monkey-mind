@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense, useLayoutEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SiteProvider } from './lib/store.jsx';
 import Header from './components/Header.jsx';
 import { Inquiry, Colophon } from './components/Footer.jsx';
@@ -43,10 +43,23 @@ const basename =
     ? '/monkey-mind'
     : '/';
 
+// New pages open at the top — SPA navigation would otherwise keep the previous
+// page's scroll offset. 'manual' disables the browser's own (racy) restoration.
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useLayoutEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <SiteProvider>
       <BrowserRouter basename={basename}>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<PublicShell><Home /></PublicShell>} />
           <Route path="/projects" element={<PublicShell><Projects /></PublicShell>} />

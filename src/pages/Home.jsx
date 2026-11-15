@@ -25,11 +25,13 @@ export default function Home() {
     <>
       <section className="hero hero-home">
         <h1>MONKEY<br />MIND</h1>
-        <p className="blurb">{settings.home.blurb}</p>
-        <div className="hero-social">
-          {settings.socials.map((s) => (
-            <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
-          ))}
+        <div className="hero-right">
+          <p className="blurb">{settings.home.blurb}</p>
+          <div className="hero-social">
+            {settings.socials.map((s) => (
+              <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -48,7 +50,7 @@ export default function Home() {
       ) : publishedProjects.length === 0 ? (
         <div className="card">
           {syncError ? (
-            <p style={{ color: '#b3261e' }}>Couldn't load projects: {syncError}</p>
+            <p style={{ color: 'var(--danger)' }}>Couldn't load projects: {syncError}</p>
           ) : (
             <p style={{ color: 'var(--muted)' }}>No published projects yet — add them in <Link to="/admin/projects" style={{ textDecoration: 'underline' }}>CMS → Projects</Link>.</p>
           )}
