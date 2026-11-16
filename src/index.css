@@ -102,7 +102,7 @@ button { font-family: inherit; cursor: pointer; }
 .site-header .topbar { display: grid; grid-template-columns: var(--split) 1fr auto; align-items: center; height: 56px; font-family: var(--font-body); font-size: .8rem; font-weight: 500; }
 .topbar-right { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-width: 0; }
 .brand { font-weight: 500; justify-self: start; display: inline-flex; align-items: center; color: var(--ink); }
-.brand-logo { display: block; height: 24px; width: auto; }
+.brand-logo { display: block; height: 36px; width: auto; }
 .topnav { display: flex; gap: 18px; }
 .topnav a { position: relative; opacity: .85; text-decoration: none; }
 .topnav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; opacity: 0; transition: opacity .25s ease; }
