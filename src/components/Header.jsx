@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useSite } from '../lib/store.jsx';
 import { useTheme } from '../lib/theme.js';
-import mmMarkLight from '../assets/mm-logo/mm-logo-10.svg';
-import mmMarkDark from '../assets/mm-logo/mm-logo-10-dark.svg';
+import mmMarkLight from '../assets/mm-logo/mm-logo-05.svg';
+import mmMarkDark from '../assets/mm-logo/mm-logo-11.svg';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
