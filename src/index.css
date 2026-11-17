@@ -99,7 +99,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Header — minimal static top bar (brand / Index+Projects / email) */
 .site-header { position: sticky; top: 0; z-index: 50; background: transparent; }
-.site-header .topbar { display: grid; grid-template-columns: var(--split) 1fr auto; align-items: center; height: 56px; font-family: var(--font-body); font-size: .8rem; font-weight: 500; }
+.site-header .topbar { display: grid; grid-template-columns: var(--split) 1fr auto; align-items: center; height: 66px; font-family: var(--font-body); font-size: .8rem; font-weight: 500; }
 .topbar-right { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-width: 0; }
 .brand { font-weight: 500; justify-self: start; display: inline-flex; align-items: center; color: var(--ink); }
 .brand-logo { display: block; height: 36px; width: auto; }
