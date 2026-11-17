@@ -463,14 +463,14 @@ export default function ProjectEditor() {
           </div>
 
           <div className="card">
-            <b>4. List + feed hover images</b>
+            <b>4. Hover images (List, Feed + Full)</b>
             <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
-              List view uses Hover image 1 when a row is hovered. Feed view uses Hover image 1 and Hover image 2. Leave a slot on Automatic to keep using the next gallery photo. You can also upload a separate custom image for either slot.
+              List view uses Hover image 1, falling back to Hover image 2. Feed view uses both. Full view cycles them with the gallery. Leave a slot on Automatic to keep using the next gallery photo. You can also upload a separate custom image for either slot.
             </p>
             {hoverError && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{hoverError}</p>}
             <div className="row" style={{ alignItems: 'flex-start', gap: 24 }}>
               <div style={{ flex: 1 }}>
-                <label>Hover image 1 (List + Feed)</label>
+                <label>Hover image 1 (List + Feed + Full)</label>
                 <select value={form.hover1?.url || ''} onChange={(e) => setHover('hover1', e.target.value)}>
                   <option value="">Automatic — next gallery photo</option>
                   {customHover1 && <option value={form.hover1.url}>Custom uploaded image</option>}
@@ -484,7 +484,7 @@ export default function ProjectEditor() {
                 {hoverBusy === 'hover1' && <p style={{ color: 'var(--muted)', fontSize: '.85rem', marginTop: 4 }}>Uploading…</p>}
               </div>
               <div style={{ flex: 1 }}>
-                <label>Hover image 2 (Feed)</label>
+                <label>Hover image 2 (Feed + Full)</label>
                 <select value={form.hover2?.url || ''} onChange={(e) => setHover('hover2', e.target.value)}>
                   <option value="">Automatic — next gallery photo</option>
                   {customHover2 && <option value={form.hover2.url}>Custom uploaded image</option>}

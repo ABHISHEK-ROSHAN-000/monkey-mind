@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deliveryUrl } from '../lib/cloudinary.js';
+import { fullCycleImages, listThumbSources } from '../lib/workMedia.js';
 
 // Tile source: dedicated thumbnail first, then first gallery photo (images
 // only — legacy video entries are skipped), then the main photo.
@@ -31,9 +32,7 @@ export function WorkGrid({ items }) {
 }
 
 function ListThumb({ p }) {
-  const imgs = (p.media || []).filter((m) => m.type !== 'video');
-  const first = p.thumbnail?.url ? p.thumbnail : imgs[0];
-  const second = p.hover1?.url && p.hover1.url !== first?.url ? p.hover1 : imgs[1];
+  const { first, second } = listThumbSources(p);
   return (
     <span className="list-thumb">
       <img className="t0" src={deliveryUrl(first, { w: 800 }) || p.cover} alt="" loading="lazy" />
@@ -142,24 +141,11 @@ function FullItem({ p }) {
   );
 }
 
-// Foreground cycler: first 3 gallery photos (stills only), shortfalls padded
-// with the cover (deduped). Cycles while hovered/focused only; a single
-// image renders today's static tile with no timer at all.
+// Foreground cycler: first gallery photo, then the CMS hover images, then
+// the remaining stills and cover (deduped), capped at 3. Cycles while
+// hovered/focused only; a single image renders today's static tile.
 function FullFg({ p, active }) {
-  const imgs = useMemo(() => {
-    const seen = new Set();
-    const out = [];
-    const push = (m) => {
-      if (!m?.url || seen.has(m.url)) return;
-      seen.add(m.url);
-      out.push(m);
-    };
-    (p.media || []).forEach((m) => {
-      if (m.type !== 'video') push(m);
-    });
-    if (p.cover) push({ url: p.cover });
-    return out.slice(0, 3);
-  }, [p]);
+  const imgs = useMemo(() => fullCycleImages(p), [p]);
   const [i, setI] = useState(0);
   const [reduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
