@@ -9,8 +9,8 @@ export function listThumbSources(p) {
   return { first, second: hover || imgs[1] };
 }
 
-// Full foreground cycle: first gallery photo, then the CMS hover images,
-// then the remaining stills and cover (deduped), capped at 3.
+// Full foreground: the CMS hover images take priority. If none are set,
+// fall back to the first three gallery stills and cover (deduped).
 export function fullCycleImages(p) {
   const seen = new Set();
   const out = [];
@@ -19,11 +19,11 @@ export function fullCycleImages(p) {
     seen.add(m.url);
     out.push(m);
   };
+  [p.hover1, p.hover2].forEach(push);
+  if (out.length) return out.slice(0, 2);
+
   const stills = (p.media || []).filter((m) => m.type !== 'video');
-  push(stills[0]);
-  push(p.hover1);
-  push(p.hover2);
-  stills.slice(1).forEach(push);
+  stills.forEach(push);
   if (p.cover) push({ url: p.cover });
   return out.slice(0, 3);
 }

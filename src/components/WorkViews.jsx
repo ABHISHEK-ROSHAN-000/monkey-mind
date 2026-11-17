@@ -141,9 +141,9 @@ function FullItem({ p }) {
   );
 }
 
-// Foreground cycler: first gallery photo, then the CMS hover images, then
-// the remaining stills and cover (deduped), capped at 3. Cycles while
-// hovered/focused only; a single image renders today's static tile.
+// Foreground cycler: the CMS hover images when present, otherwise the first
+// three gallery stills. Cycles while hovered/focused only; a single image
+// renders as a static centre image.
 function FullFg({ p, active }) {
   const imgs = useMemo(() => fullCycleImages(p), [p]);
   const [i, setI] = useState(0);
@@ -159,6 +159,10 @@ function FullFg({ p, active }) {
     return () => clearInterval(t);
   }, [active, reduced, imgs]);
   if (reduced || imgs.length < 2) {
+    const still = imgs[0];
+    if (still?.url) {
+      return <img src={deliveryUrl(still, { w: 1200 })} alt={p.title} loading="lazy" decoding="async" />;
+    }
     return <Thumb p={p} />;
   }
   return (

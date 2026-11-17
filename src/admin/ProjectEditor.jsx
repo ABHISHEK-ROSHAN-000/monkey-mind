@@ -465,7 +465,7 @@ export default function ProjectEditor() {
           <div className="card">
             <b>4. Hover images (List, Feed + Full)</b>
             <p style={{ color: 'var(--muted)', fontSize: '.85rem' }}>
-              List view uses Hover image 1, falling back to Hover image 2. Feed view uses both. Full view cycles them with the gallery. Leave a slot on Automatic to keep using the next gallery photo. You can also upload a separate custom image for either slot.
+              List view uses Hover image 1, falling back to Hover image 2. Feed view uses both. Full view uses the hover images when set; otherwise it falls back to the gallery. Leave a slot on Automatic to keep using the next gallery photo. You can also upload a separate custom image for either slot.
             </p>
             {hoverError && <p style={{ color: 'var(--danger)', fontSize: '.85rem' }}>{hoverError}</p>}
             <div className="row" style={{ alignItems: 'flex-start', gap: 24 }}>
